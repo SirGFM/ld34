@@ -30,3 +30,11 @@
 
 # Debug files
 *.dSYM/
+
+# Random stuff...
+random_stuff
+*assets/xcf
+*promo
+*bin
+*obj
+*.swp
