@@ -9,6 +9,7 @@
 # Define every object required by compilation
 #==============================================================================
   OBJS =                        \
+          $(OBJDIR)/collide.o   \
           $(OBJDIR)/gamestate.o \
           $(OBJDIR)/main.o      \
           $(OBJDIR)/player.o

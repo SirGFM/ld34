@@ -34,7 +34,7 @@ void player_clean(player **ppPlayer);
 /**
  * Update the player's physics and handle inputs
  *
- * NOTE: Must be called before colliding!
+ * NOTE: This function already adds the player to the quadtree
  *
  * @param  [ in]pPlayer The player
  */
@@ -56,6 +56,15 @@ gfmRV player_postUpdate(player *pPlayer);
  * @param  [ in]pPlayer The player
  */
 gfmRV player_draw(player *pPlayer);
+
+/**
+ * Collide the player's limbs against the floor
+ *
+ * @param  [ in]pPlayer The colliding player
+ * @param  [ in]type    Which limb collided
+ * @param  [ in]pFloor  The floor
+ */
+gfmRV player_collideLimbFloor(player *pPlayer, int type, gfmObject *pFloor);
 
 #endif /* __PLAYER_H__ */
 

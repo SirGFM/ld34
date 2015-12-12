@@ -7,8 +7,9 @@
 #define __GAME_H__
 
 #include <GFraMe/gframe.h>
-#include <GFraMe/gfmSpriteset.h>
 #include <GFraMe/gfmInput.h>
+#include <GFraMe/gfmQuadtree.h>
+#include <GFraMe/gfmSpriteset.h>
 #include <GFraMe/gfmTypes.h>
 
 enum enState {
@@ -23,6 +24,8 @@ typedef enum enState state;
 struct stGameCtx {
     /** The game context */
     gfmCtx *pCtx;
+    /** The quadtree for collision */
+    gfmQuadtreeRoot *pQt;
     /** Current state */
     state curState;
     /**
@@ -33,6 +36,9 @@ struct stGameCtx {
     state nextState;
     /** Whether in fullscreen or windowed mode */
     int isFullscreen;
+    int width;
+    int height;
+    int drawQt;
 };
 typedef struct stGameCtx gameCtx;
 
@@ -65,6 +71,7 @@ struct stGameButtons {
     button right_leg;
     button fullscreen;
     button quit;
+    button drawQt;
 };
 typedef struct stGameButtons gameButtons;
 
@@ -100,6 +107,7 @@ extern void *pState;
 #define PL_LOWER     gfmType_reserved_3
 #define PL_LEFT_LEG  gfmType_reserved_4
 #define PL_RIGHT_LEG gfmType_reserved_5
+#define FLOOR        gfmType_reserved_6
 
 #endif /* __GAME_H__ */
 

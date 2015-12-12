@@ -26,7 +26,7 @@ gfmRV gamestate_draw();
  *
  * NOTE: pState will be overwritten!
  */
-gfmRV gamestate_clean();
+void gamestate_clean();
 
 #endif /* __GAMESTATE_H__ */
 

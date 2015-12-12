@@ -7,6 +7,7 @@
 #include <GFraMe/gfmAssert.h>
 #include <GFraMe/gfmError.h>
 #include <GFraMe/gfmSave.h>
+#include <GFraMe/gfmQuadtree.h>
 #include <GFraMe/core/gfmAudio_bkend.h>
 
 #include <ld34/game.h>
@@ -52,10 +53,17 @@ static gfmRV main_updateButtons() {
             &(pButtons->fullscreen.num), pGame->pCtx,
             pButtons->fullscreen.handle);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->drawQt.state), &(pButtons->drawQt.num),
+            pGame->pCtx, pButtons->drawQt.handle);
+    ASSERT(rv == GFMRV_OK, rv);
 
     if (pButtons->quit.state == gfmInput_justReleased) {
         rv = gfm_setQuitFlag(pGame->pCtx);
         ASSERT(rv == GFMRV_OK, rv);
+    }
+
+    if (pButtons->drawQt.state == gfmInput_justReleased) {
+        pGame->drawQt = !pGame->drawQt;
     }
 
     if (pButtons->fullscreen.state == gfmInput_justReleased) {
@@ -140,10 +148,9 @@ static gfmRV main_loop() {
             /* Clear the current state */
             switch (pGame->curState) {
                 case state_intro: ASSERT(0, GFMRV_FUNCTION_NOT_IMPLEMENTED); break;
-                case state_game: rv = gamestate_clean(); break;
+                case state_game: gamestate_clean(); break;
                 default: ASSERT(0, GFMRV_INTERNAL_ERROR);
             }
-            ASSERT(rv == GFMRV_OK, rv);
 
             pGame->curState = state_none;
         }
@@ -247,6 +254,8 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_addVirtualKey(&(pButtons->quit.handle), pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->drawQt.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
 
     rv = gfm_bindInput(pGame->pCtx, pButtons->left_leg.handle, gfmKey_f);
     ASSERT(rv == GFMRV_OK, rv);
@@ -286,6 +295,8 @@ int main(int argc, char *argv[]) {
 
     rv = gfm_bindInput(pGame->pCtx, pButtons->fullscreen.handle, gfmKey_f12);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindInput(pGame->pCtx, pButtons->drawQt.handle, gfmKey_f1);
+    ASSERT(rv == GFMRV_OK, rv);
 
     rv = gfm_bindInput(pGame->pCtx, pButtons->quit.handle, gfmKey_esc);
     ASSERT(rv == GFMRV_OK, rv);
@@ -309,6 +320,9 @@ int main(int argc, char *argv[]) {
     /* TODO Set the main state as the intro */
     pGame->nextState = state_game;
 
+    rv = gfmQuadtree_getNew(&(pGame->pQt));
+    ASSERT(rv == GFMRV_OK, rv);
+
     rv = main_loop();
     ASSERT(rv == GFMRV_OK, rv);
 
@@ -316,6 +330,7 @@ int main(int argc, char *argv[]) {
 __ret:
     if (pGame) {
         /* TODO Free everything else */
+        gfmQuadtree_free(&(pGame->pQt));
         gfm_free(&(pGame->pCtx));
     }
     if (pGame) {
