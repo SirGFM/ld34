@@ -56,17 +56,34 @@ static gfmRV main_updateButtons() {
     rv = gfm_getKeyState(&(pButtons->drawQt.state), &(pButtons->drawQt.num),
             pGame->pCtx, pButtons->drawQt.handle);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->gif.state), &(pButtons->gif.num),
+            pGame->pCtx, pButtons->gif.handle);
+    ASSERT(rv == GFMRV_OK, rv);
 
-    if (pButtons->quit.state == gfmInput_justReleased) {
+    if ((pButtons->quit.state & gfmInput_justReleased) ==
+            gfmInput_justReleased) {
         rv = gfm_setQuitFlag(pGame->pCtx);
         ASSERT(rv == GFMRV_OK, rv);
     }
 
-    if (pButtons->drawQt.state == gfmInput_justReleased) {
+    if ((pButtons->drawQt.state & gfmInput_justReleased) ==
+            gfmInput_justReleased) {
         pGame->drawQt = !pGame->drawQt;
     }
 
-    if (pButtons->fullscreen.state == gfmInput_justReleased) {
+    if ((pButtons->gif.state & gfmInput_justReleased) ==
+            gfmInput_justReleased) {
+#ifdef DEBUG
+        rv =  gfm_didExportGif(pGame->pCtx);
+        if (rv == GFMRV_TRUE || rv == GFMRV_GIF_OPERATION_NOT_ACTIVE) {
+            rv = gfm_recordGif(pGame->pCtx, 10000, "anim.gif", 8, 0);
+            ASSERT(rv == GFMRV_OK, rv);
+        }
+#endif
+    }
+
+    if ((pButtons->fullscreen.state & gfmInput_justReleased) ==
+            gfmInput_justReleased) {
         if (pGame->isFullscreen) {
             rv = gfm_setWindowed(pGame->pCtx);
             ASSERT(rv == GFMRV_OK, rv);
@@ -256,6 +273,8 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_addVirtualKey(&(pButtons->drawQt.handle), pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->gif.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
 
     rv = gfm_bindInput(pGame->pCtx, pButtons->left_leg.handle, gfmKey_f);
     ASSERT(rv == GFMRV_OK, rv);
@@ -296,6 +315,8 @@ int main(int argc, char *argv[]) {
     rv = gfm_bindInput(pGame->pCtx, pButtons->fullscreen.handle, gfmKey_f12);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_bindInput(pGame->pCtx, pButtons->drawQt.handle, gfmKey_f1);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindInput(pGame->pCtx, pButtons->gif.handle, gfmKey_f2);
     ASSERT(rv == GFMRV_OK, rv);
 
     rv = gfm_bindInput(pGame->pCtx, pButtons->quit.handle, gfmKey_esc);

@@ -72,6 +72,7 @@ struct stGameButtons {
     button fullscreen;
     button quit;
     button drawQt;
+    button gif;
 };
 typedef struct stGameButtons gameButtons;
 
@@ -102,6 +103,10 @@ extern void *pState;
 #define BGCOLOR 0x000000
 #define TEXATLAS "atlas.bmp"
 #define COLORKEY 0xff00ff
+
+#define PL_VX 15.0
+#define PL_VY -50.0
+#define PL_HOLD_T 600
 
 #define PL_UPPER     gfmType_reserved_2
 #define PL_LOWER     gfmType_reserved_3

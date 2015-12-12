@@ -17,11 +17,13 @@
 #include <string.h>
 
 struct stPlayer {
-    gfmObject *pLowerTorso;
-    gfmObject *pUpperTorso;
-    gfmObject *pLeftLeg;
-    gfmObject *pRightLeg;
+    gfmObject *lower_pTorso;
+    gfmObject *upper_pTorso;
+    gfmObject *left_pLeg;
+    gfmObject *right_pLeg;
     gfmSprite *pRenderSpr;
+    int left_raisingTime;
+    int right_raisingTime;
 };
 
 /**
@@ -39,36 +41,36 @@ gfmRV player_init(player **ppPlayer, int x, int y) {
     ASSERT(pPlayer, GFMRV_ALLOC_FAILED);
     memset(pPlayer, 0x0, sizeof(player));
 
-    rv = gfmObject_getNew(&(pPlayer->pUpperTorso));
+    rv = gfmObject_getNew(&(pPlayer->upper_pTorso));
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_getNew(&(pPlayer->pLowerTorso));
+    rv = gfmObject_getNew(&(pPlayer->lower_pTorso));
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_getNew(&(pPlayer->pRightLeg));
+    rv = gfmObject_getNew(&(pPlayer->right_pLeg));
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_getNew(&(pPlayer->pLeftLeg));
+    rv = gfmObject_getNew(&(pPlayer->left_pLeg));
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmSprite_getNew(&(pPlayer->pRenderSpr));
     ASSERT(rv == GFMRV_OK, rv);
 
-    rv = gfmObject_init(pPlayer->pUpperTorso, x, y, 10, 14, pPlayer,
+    rv = gfmObject_init(pPlayer->upper_pTorso, x, y, 10, 14, pPlayer,
             PL_UPPER);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_init(pPlayer->pLowerTorso, x, y+13, 10, 14, pPlayer,
+    rv = gfmObject_init(pPlayer->lower_pTorso, x, y+13, 10, 14, pPlayer,
             PL_LOWER);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_init(pPlayer->pLeftLeg, x+4, y+30, 10, 14, pPlayer,
+    rv = gfmObject_init(pPlayer->left_pLeg, x+4, y+30, 10, 14, pPlayer,
             PL_LEFT_LEG);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_init(pPlayer->pRightLeg, x+1, y+30, 10, 14, pPlayer,
+    rv = gfmObject_init(pPlayer->right_pLeg, x+1, y+30, 10, 14, pPlayer,
             PL_RIGHT_LEG);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmSprite_init(pPlayer->pRenderSpr, 0, 0, 2, 2, pAssets->pSset8x8, 0,
             0, 0, PL_UPPER);
     ASSERT(rv == GFMRV_OK, rv);
 
-    rv = gfmObject_setAcceleration(pPlayer->pLeftLeg, 0, 100);
+    rv = gfmObject_setAcceleration(pPlayer->left_pLeg, 0, 100);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_setAcceleration(pPlayer->pRightLeg, 0, 100);
+    rv = gfmObject_setAcceleration(pPlayer->right_pLeg, 0, 100);
     ASSERT(rv == GFMRV_OK, rv);
 
     *ppPlayer = pPlayer;
@@ -88,13 +90,66 @@ void player_clean(player **ppPlayer) {
     }
 
     gfmSprite_free(&((*ppPlayer)->pRenderSpr));
-    gfmObject_free(&((*ppPlayer)->pUpperTorso));
-    gfmObject_free(&((*ppPlayer)->pLowerTorso));
-    gfmObject_free(&((*ppPlayer)->pLeftLeg));
-    gfmObject_free(&((*ppPlayer)->pRightLeg));
+    gfmObject_free(&((*ppPlayer)->upper_pTorso));
+    gfmObject_free(&((*ppPlayer)->lower_pTorso));
+    gfmObject_free(&((*ppPlayer)->left_pLeg));
+    gfmObject_free(&((*ppPlayer)->right_pLeg));
 
     free(*ppPlayer);
     *ppPlayer = 0;
+}
+
+static inline gfmRV player_moveLeg(gfmObject *pObj, button *pBt, int *pTime) {
+    gfmRV rv;
+
+    if ((pBt->state & gfmInput_justPressed) == gfmInput_justPressed) {
+        gfmCollision dir;
+        int elapsed;
+
+        rv = gfm_getElapsedTime(&elapsed, pGame->pCtx);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        rv = gfmObject_getCollision(&dir, pObj);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        if (dir & gfmCollision_down) {
+            rv = gfmObject_setVelocity(pObj, PL_VX, PL_VY);
+            ASSERT(rv == GFMRV_OK, rv);
+        }
+        else {
+            *pTime = PL_HOLD_T;
+        }
+
+        *pTime += elapsed;
+    }
+    else if ((pBt->state & gfmInput_pressed) == gfmInput_pressed && *pTime < PL_HOLD_T) {
+        int elapsed;
+        double vx, vy;
+
+        rv = gfm_getElapsedTime(&elapsed, pGame->pCtx);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        vx = PL_VX + PL_VX * 0.1 * (PL_HOLD_T - *pTime) / (double)PL_HOLD_T;
+        vy = PL_VY  * 0.8 * (PL_HOLD_T - *pTime) / (double)PL_HOLD_T;
+
+        rv = gfmObject_setVelocity(pObj, vx, vy);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        *pTime += elapsed;
+    }
+    else if ((pBt->state & gfmInput_justReleased) == gfmInput_justReleased) {
+        *pTime = 0;
+
+        rv = gfmObject_setHorizontalVelocity(pObj, 0.0);
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+    else if ((pBt->state & gfmInput_released) == gfmInput_released) {
+        *pTime = 0;
+    }
+
+    rv = GFMRV_OK;
+__ret:
+    return rv;
 }
 
 /**
@@ -107,20 +162,24 @@ void player_clean(player **ppPlayer) {
 gfmRV player_preUpdate(player *pPlayer) {
     gfmRV rv;
 
-    if (pButtons->left_leg.state & gfmInput_pressed) {
-    }
+    rv = player_moveLeg(pPlayer->left_pLeg, &(pButtons->left_leg),
+            &(pPlayer->left_raisingTime));
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = player_moveLeg(pPlayer->right_pLeg, &(pButtons->right_leg),
+            &(pPlayer->right_raisingTime));
+    ASSERT(rv == GFMRV_OK, rv);
 
-    rv = gfmObject_update(pPlayer->pUpperTorso, pGame->pCtx);
+    rv = gfmObject_update(pPlayer->upper_pTorso, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_update(pPlayer->pLowerTorso, pGame->pCtx);
+    rv = gfmObject_update(pPlayer->lower_pTorso, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_update(pPlayer->pLeftLeg, pGame->pCtx);
+    rv = gfmObject_update(pPlayer->left_pLeg, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_update(pPlayer->pRightLeg, pGame->pCtx);
+    rv = gfmObject_update(pPlayer->right_pLeg, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
 
     /* Collide left leg */
-    rv = gfmQuadtree_collideObject(pGame->pQt, pPlayer->pLeftLeg);
+    rv = gfmQuadtree_collideObject(pGame->pQt, pPlayer->left_pLeg);
     ASSERT(rv == GFMRV_QUADTREE_OVERLAPED || rv == GFMRV_QUADTREE_DONE, rv);
     if (rv == GFMRV_QUADTREE_OVERLAPED) {
         rv = collide_run();
@@ -128,7 +187,7 @@ gfmRV player_preUpdate(player *pPlayer) {
     }
 
     /* Collide right leg */
-    rv = gfmQuadtree_collideObject(pGame->pQt, pPlayer->pRightLeg);
+    rv = gfmQuadtree_collideObject(pGame->pQt, pPlayer->right_pLeg);
     ASSERT(rv == GFMRV_QUADTREE_OVERLAPED || rv == GFMRV_QUADTREE_DONE, rv);
     if (rv == GFMRV_QUADTREE_OVERLAPED) {
         rv = collide_run();
@@ -188,13 +247,13 @@ gfmRV player_draw(player *pPlayer) {
     gfmRV rv;
     int ut_x, ut_y, lt_x, lt_y, ll_x, ll_y, rl_x, rl_y;
 
-    rv = gfmObject_getPosition(&ut_x, &ut_y, pPlayer->pUpperTorso);
+    rv = gfmObject_getPosition(&ut_x, &ut_y, pPlayer->upper_pTorso);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_getPosition(&lt_x, &lt_y, pPlayer->pLowerTorso);
+    rv = gfmObject_getPosition(&lt_x, &lt_y, pPlayer->lower_pTorso);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_getPosition(&ll_x, &ll_y, pPlayer->pLeftLeg);
+    rv = gfmObject_getPosition(&ll_x, &ll_y, pPlayer->left_pLeg);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_getPosition(&rl_x, &rl_y, pPlayer->pRightLeg);
+    rv = gfmObject_getPosition(&rl_x, &rl_y, pPlayer->right_pLeg);
     ASSERT(rv == GFMRV_OK, rv);
 
 
@@ -251,10 +310,10 @@ gfmRV player_collideLimbFloor(player *pPlayer, int type, gfmObject *pFloor) {
 
     switch (type) {
         case PL_LEFT_LEG: {
-            pObj = pPlayer->pLeftLeg;
+            pObj = pPlayer->left_pLeg;
         } break;
         case PL_RIGHT_LEG: {
-            pObj = pPlayer->pRightLeg;
+            pObj = pPlayer->right_pLeg;
         } break;
         default: { return GFMRV_OK; }
     }
@@ -262,7 +321,7 @@ gfmRV player_collideLimbFloor(player *pPlayer, int type, gfmObject *pFloor) {
     rv = gfmObject_collide(pObj, pFloor);
     ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
     if (rv == GFMRV_TRUE) {
-        rv = gfmObject_setVerticalVelocity(pObj, 0);
+        rv = gfmObject_setVelocity(pObj, 0.0, 0.0);
         ASSERT(rv == GFMRV_OK, rv);
     }
 
