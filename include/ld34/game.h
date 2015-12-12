@@ -9,11 +9,26 @@
 #include <GFraMe/gframe.h>
 #include <GFraMe/gfmSpriteset.h>
 
+enum enState {
+    state_none = 0,
+    state_intro,
+    state_game,
+    state_max
+};
+typedef enum enState state;
+
 /** The main game struct */
 struct stGameCtx {
-/* ========================================================================== */
     /** The game context */
     gfmCtx *pCtx;
+    /** Current state */
+    state curState;
+    /**
+     * If this is different from state_none, the current state will be cleared
+     * before re-entering the loop and the new state will be initialized the
+     * next time it's run
+     */
+    state nextState;
 /* == BUTTONS =============================================================== */
 /* == STATE ================================================================= */
 };
@@ -24,6 +39,10 @@ struct stGameAssets {
     int texHandle;
     /** 8x8 spriteset */
     gfmSpriteset *pSset8x8;
+    /** 16x16 spriteset */
+    gfmSpriteset *pSset16x16;
+    /** 32x16 spriteset */
+    gfmSpriteset *pSset32x16;
 };
 typedef struct stGameAssets gameAssets;
 
@@ -35,18 +54,12 @@ struct stConfigCtx {
 };
 typedef struct stConfigCtx configCtx;
 
-/**
- * Make the game context accessible to every *.c file (that includes this);
- *
- * It can be found on main.c
- */
+/** The game context; Found on main.c */
 extern gameCtx *pGame;
-/**
- * Make the assets accessible to every *.c file (that includes this);
- *
- * It can be found on main.c
- */
+/** All texture, spritesets and songs; Found on main.c */
 extern gameAssets *pAssets;
+/** Currently running state; Found on main.c */
+extern void *pState;
 
 #define ORG "com.gfmgamecorner"
 #define TITLE "LD34"
