@@ -106,7 +106,10 @@ extern void *pState;
 
 #define PL_VX 15.0
 #define PL_VY -50.0
+#define PL_JUMP_VX 25.0
+#define PL_JUMP_VY -80.0
 #define PL_HOLD_T 600
+#define PL_JUMP_T 125
 
 #define PL_UPPER     gfmType_reserved_2
 #define PL_LOWER     gfmType_reserved_3
