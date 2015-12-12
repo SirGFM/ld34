@@ -9,6 +9,7 @@
 #include <GFraMe/gframe.h>
 #include <GFraMe/gfmSpriteset.h>
 #include <GFraMe/gfmInput.h>
+#include <GFraMe/gfmTypes.h>
 
 enum enState {
     state_none = 0,
@@ -94,6 +95,11 @@ extern void *pState;
 #define BGCOLOR 0x000000
 #define TEXATLAS "atlas.bmp"
 #define COLORKEY 0xff00ff
+
+#define PL_UPPER     gfmType_reserved_2
+#define PL_LOWER     gfmType_reserved_3
+#define PL_LEFT_LEG  gfmType_reserved_4
+#define PL_RIGHT_LEG gfmType_reserved_5
 
 #endif /* __GAME_H__ */
 

@@ -8,12 +8,13 @@
 
 #include <ld34/game.h>
 #include <ld34/gamestate.h>
+#include <ld34/player.h>
 
 #include <stdlib.h>
 #include <string.h>
 
 struct stGamestate {
-    int bla;
+    player *pPlayer;
 };
 typedef struct stGamestate gamestate;
 
@@ -31,6 +32,8 @@ gfmRV gamestate_init() {
     memset(pGamestate, 0x0, sizeof(gamestate));
 
     /* TODO Initialize everything */
+    rv = player_init(&(pGamestate->pPlayer), 64, 64);
+    ASSERT(rv == GFMRV_OK, rv);
 
     pState = pGamestate;
     rv = GFMRV_OK;
@@ -60,6 +63,8 @@ gfmRV gamestate_draw() {
     pGamestate = (gamestate*)pState;
 
     /* TODO Render the game */
+    rv = player_draw(pGamestate->pPlayer);
+    ASSERT(rv == GFMRV_OK, rv);
 
     rv = GFMRV_OK;
 __ret:
@@ -78,6 +83,7 @@ gfmRV gamestate_clean() {
     pGamestate = (gamestate*)pState;
 
     /* TODO Release everything alloc'ed for the gamestate */
+    player_clean(&(pGamestate->pPlayer));
 
     free(pState);
     pState = 0;
