@@ -353,7 +353,7 @@ __ret:
  */
 gfmRV player_draw(player *pPlayer) {
     gfmRV rv;
-    int ut_x, ut_y, lt_x, lt_y, ll_x, ll_y, rl_x, rl_y;
+    int ut_x, ut_y, lt_x, lt_y, ll_x, ll_y, rl_x, rl_y, lk_x, lk_y, rk_x, rk_y;
 
     rv = gfmObject_getPosition(&ut_x, &ut_y, pPlayer->upper_pTorso);
     ASSERT(rv == GFMRV_OK, rv);
@@ -365,17 +365,19 @@ gfmRV player_draw(player *pPlayer) {
     ASSERT(rv == GFMRV_OK, rv);
 
 
-    /* Left hip */
-    rv = player_draw_module(pPlayer->pRenderSpr, pAssets->pSset8x8, lt_x+4,
-            lt_y+10, 0, 0, 8, 8, 67);
-    ASSERT(rv == GFMRV_OK, rv);
-    /* Left knee (TODO Fix position) */
-    rv = player_draw_module(pPlayer->pRenderSpr, pAssets->pSset8x8, lt_x+6,
-            lt_y+13, 0, 0, 8, 8, 66);
-    ASSERT(rv == GFMRV_OK, rv);
     /* Left leg */
     rv = player_draw_module(pPlayer->pRenderSpr, pAssets->pSset16x16, ll_x,
             ll_y, -2, -2, 10, 14, 33);
+    ASSERT(rv == GFMRV_OK, rv);
+    /* Left knee */
+    lk_x = ((lt_x + 2) + (ll_x + 1)) / 2;
+    lk_y = ((lt_y + 13) + (ll_y - 4)) / 2;
+    rv = player_draw_module(pPlayer->pRenderSpr, pAssets->pSset8x8, lk_x, lk_y,
+            0, 0, 8, 8, 66);
+    ASSERT(rv == GFMRV_OK, rv);
+    /* Left hip */
+    rv = player_draw_module(pPlayer->pRenderSpr, pAssets->pSset8x8, lt_x+4,
+            lt_y+10, 0, 0, 8, 8, 67);
     ASSERT(rv == GFMRV_OK, rv);
 
     /* Lower torso */
@@ -391,9 +393,11 @@ gfmRV player_draw(player *pPlayer) {
     rv = player_draw_module(pPlayer->pRenderSpr, pAssets->pSset8x8, lt_x,
             lt_y+10, 0, 0, 8, 8, 65);
     ASSERT(rv == GFMRV_OK, rv);
-    /* Right knee (TODO Fix position) */
-    rv = player_draw_module(pPlayer->pRenderSpr, pAssets->pSset8x8, lt_x+2,
-            lt_y+13, 0, 0, 8, 8, 64);
+    /* Right knee */
+    rk_x = ((lt_x + 2) + (rl_x + 1)) / 2;
+    rk_y = ((lt_y + 13) + (rl_y - 4)) / 2;
+    rv = player_draw_module(pPlayer->pRenderSpr, pAssets->pSset8x8, rk_x, rk_y,
+            0, 0, 8, 8, 64);
     ASSERT(rv == GFMRV_OK, rv);
     /* Right leg */
     rv = player_draw_module(pPlayer->pRenderSpr, pAssets->pSset16x16, rl_x,
