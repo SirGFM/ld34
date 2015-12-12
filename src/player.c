@@ -179,6 +179,7 @@ __ret:
  */
 gfmRV player_preUpdate(player *pPlayer) {
     gfmRV rv;
+    int l_x, r_x;
 
     rv = player_moveLeg(pPlayer->left_pLeg, &(pButtons->left_leg),
             &(pPlayer->left_raisingTime), pPlayer->didJump);
@@ -186,6 +187,24 @@ gfmRV player_preUpdate(player *pPlayer) {
     rv = player_moveLeg(pPlayer->right_pLeg, &(pButtons->right_leg),
             &(pPlayer->right_raisingTime), pPlayer->didJump);
     ASSERT(rv == GFMRV_OK, rv);
+
+    /* Check that the maximum distance wasn't reached */
+    rv = gfmObject_getHorizontalPosition(&l_x, pPlayer->left_pLeg);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmObject_getHorizontalPosition(&r_x, pPlayer->right_pLeg);
+
+    ASSERT(rv == GFMRV_OK, rv);
+    if (abs(l_x - r_x) >= PL_MAX_DIST && !pPlayer->didJump) {
+        if (l_x > r_x) {
+            rv = gfmObject_setHorizontalVelocity(pPlayer->left_pLeg, 0.0);
+            ASSERT(rv == GFMRV_OK, rv);
+        }
+        else {
+            rv = gfmObject_setHorizontalVelocity(pPlayer->right_pLeg, 0.0);
+            ASSERT(rv == GFMRV_OK, rv);
+        }
+    }
+
 
     rv = gfmObject_update(pPlayer->upper_pTorso, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
@@ -295,6 +314,9 @@ gfmRV player_postUpdate(player *pPlayer) {
         t_y = r_y - 4;
     }
 
+    /* Make it a little smaller when the feets are apart */
+    t_y += abs(l_x - r_x) / ((float)PL_MAX_DIST / 4.0);
+
     /* Move slightly, if jumping */
     if (pPlayer->didJump) {
         double vy;
@@ -370,8 +392,8 @@ gfmRV player_draw(player *pPlayer) {
             ll_y, -2, -2, 10, 14, 33);
     ASSERT(rv == GFMRV_OK, rv);
     /* Left knee */
-    lk_x = ((lt_x + 2) + (ll_x + 1)) / 2;
-    lk_y = ((lt_y + 13) + (ll_y - 4)) / 2;
+    lk_x = (lt_x + 2) * 0.75 + (ll_x + 1) * 0.25;
+    lk_y = (lt_y + 13) * 0.75+ (ll_y - 4) * 0.25;
     rv = player_draw_module(pPlayer->pRenderSpr, pAssets->pSset8x8, lk_x, lk_y,
             0, 0, 8, 8, 66);
     ASSERT(rv == GFMRV_OK, rv);
@@ -394,8 +416,8 @@ gfmRV player_draw(player *pPlayer) {
             lt_y+10, 0, 0, 8, 8, 65);
     ASSERT(rv == GFMRV_OK, rv);
     /* Right knee */
-    rk_x = ((lt_x + 2) + (rl_x + 1)) / 2;
-    rk_y = ((lt_y + 13) + (rl_y - 4)) / 2;
+    rk_x = (lt_x + 2) * 0.75 + (rl_x + 1) * 0.25;
+    rk_y = (lt_y + 13) * 0.75 + (rl_y - 4) * 0.25;
     rv = player_draw_module(pPlayer->pRenderSpr, pAssets->pSset8x8, rk_x, rk_y,
             0, 0, 8, 8, 64);
     ASSERT(rv == GFMRV_OK, rv);
