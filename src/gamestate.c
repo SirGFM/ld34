@@ -4,9 +4,10 @@
  * @file src/gamestate.c
  */
 #include <GFraMe/gfmAssert.h>
+#include <GFraMe/gfmCamera.h>
 #include <GFraMe/gfmError.h>
-#include <GFraMe/gfmObject.h>
 #include <GFraMe/gfmQuadtree.h>
+#include <GFraMe/gfmTilemap.h>
 
 #include <ld34/collide.h>
 #include <ld34/game.h>
@@ -16,9 +17,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+static const char *pTmDict[] = {
+    "floor"
+};
+static const int tmDictType[] = {
+    FLOOR
+};
+static const int tmDictLen = sizeof(tmDictType) / sizeof(int);
+
 struct stGamestate {
     player *pPlayer;
-    gfmObject *pObject;
+    gfmTilemap *pTm;
 };
 typedef struct stGamestate gamestate;
 
@@ -29,6 +38,7 @@ typedef struct stGamestate gamestate;
  */
 gfmRV gamestate_init() {
     gamestate *pGamestate;
+    gfmCamera *pCam;
     gfmRV rv;
 
     pGamestate = (gamestate*)malloc(sizeof(gamestate));
@@ -39,15 +49,30 @@ gfmRV gamestate_init() {
     rv = player_init(&(pGamestate->pPlayer), 64, 64);
     ASSERT(rv == GFMRV_OK, rv);
 
-    rv = gfmObject_getNew(&(pGamestate->pObject));
+    rv = gfmTilemap_getNew(&(pGamestate->pTm));
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_init(pGamestate->pObject, 0, 128, 320, 240, 0, FLOOR);
+    rv = gfmTilemap_init(pGamestate->pTm, pAssets->pSset8x8, 100/*widthInTiles*/,
+            40/*heightInTiles*/, -1/*defTile*/);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_setFixed(pGamestate->pObject);
+    rv = gfmTilemap_loadf(pGamestate->pTm, pGame->pCtx, "map.gfm", 7, (char**)pTmDict,
+            (int*)tmDictType, tmDictLen);
     ASSERT(rv == GFMRV_OK, rv);
 
-    pGame->width = 340;
-    pGame->height = 260;
+    rv = gfmTilemap_getDimension(&(pGame->width), &(pGame->height),
+            pGamestate->pTm);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    pCam = 0;
+    rv = gfm_getCamera(&pCam, pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmCamera_setWorldDimensions(pCam, pGame->width, pGame->height);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    pGame->width += 16;
+    pGame->height += 16;
+
+    rv = gfmCamera_setDeadzone(pCam, 16/*x*/, 0/*y*/, 96/*w*/, 240);
+    ASSERT(rv == GFMRV_OK, rv);
 
     pState = pGamestate;
     rv = GFMRV_OK;
@@ -67,9 +92,9 @@ gfmRV gamestate_update() {
     ASSERT(rv == GFMRV_OK, rv);
 
     /* TODO Update the game */
-    rv = gfmObject_update(pGamestate->pObject, pGame->pCtx);
+    rv = gfmTilemap_update(pGamestate->pTm, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmQuadtree_populateObject(pGame->pQt, pGamestate->pObject);
+    rv = gfmQuadtree_populateTilemap(pGame->pQt, pGamestate->pTm);
     ASSERT(rv == GFMRV_OK, rv);
 
     rv = player_preUpdate(pGamestate->pPlayer);
@@ -92,6 +117,8 @@ gfmRV gamestate_draw() {
     pGamestate = (gamestate*)pState;
 
     /* TODO Render the game */
+    rv = gfmTilemap_draw(pGamestate->pTm, pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
     rv = player_draw(pGamestate->pPlayer);
     ASSERT(rv == GFMRV_OK, rv);
 
@@ -118,7 +145,7 @@ void gamestate_clean() {
     pGamestate = (gamestate*)pState;
 
     /* TODO Release everything alloc'ed for the gamestate */
-    gfmObject_free(&(pGamestate->pObject));
+    gfmTilemap_free(&(pGamestate->pTm));
     player_clean(&(pGamestate->pPlayer));
 
     free(pState);

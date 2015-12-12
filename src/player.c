@@ -4,6 +4,7 @@
  * @file src/player.c
  */
 #include <GFraMe/gfmAssert.h>
+#include <GFraMe/gfmCamera.h>
 #include <GFraMe/gfmError.h>
 #include <GFraMe/gfmInput.h>
 #include <GFraMe/gfmObject.h>
@@ -246,6 +247,7 @@ __ret:
  */
 gfmRV player_postUpdate(player *pPlayer) {
     gfmRV rv;
+    gfmCamera *pCam;
     gfmCollision l_cur, l_last, r_cur, r_last;
     int elapsed, l_x, l_y, r_x, r_y, t_x, t_y;
 
@@ -339,6 +341,17 @@ gfmRV player_postUpdate(player *pPlayer) {
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmObject_setPosition(pPlayer->lower_pTorso, t_x, t_y - 13);
     ASSERT(rv == GFMRV_OK, rv);
+
+    pCam = 0;
+    rv = gfm_getCamera(&pCam, pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmObject_getCenter(&t_x, &t_y, pPlayer->lower_pTorso);
+    ASSERT(rv == GFMRV_OK, rv);
+    gfmCamera_centerAtPoint(pCam, t_x, t_y);
+#if 0
+    rv = gfmCamera_centerAtPoint(pCam, t_x, t_y);
+    ASSERT(rv == GFMRV_OK, rv);
+#endif
 
     rv = GFMRV_OK;
 __ret:

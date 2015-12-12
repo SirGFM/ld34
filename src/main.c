@@ -4,6 +4,7 @@
  * @file src/main.c
  */
 #include <GFraMe/gframe.h>
+#include <GFraMe/gfmGroup.h>
 #include <GFraMe/gfmAssert.h>
 #include <GFraMe/gfmError.h>
 #include <GFraMe/gfmSave.h>
@@ -333,6 +334,13 @@ int main(int argc, char *argv[]) {
     rv = gfm_setStateFrameRate(pGame->pCtx, config.ups, config.dps);
     ASSERT(rv == GFMRV_OK, rv);
 
+    /* Create all particles groups */
+    rv = gfmGroup_getNew(&(pGame->pParticles));
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_getNew(&(pGame->pCollideableParticles));
+    ASSERT(rv == GFMRV_OK, rv);
+    /* TODO Initialize all groups */
+
 #ifdef DEBUG
     rv = gfm_initFPSCounter(pGame->pCtx, pAssets->pSset8x8, 0/*firstTile*/);
     ASSERT(rv == GFMRV_OK, rv);
@@ -352,6 +360,8 @@ __ret:
     if (pGame) {
         /* TODO Free everything else */
         gfmQuadtree_free(&(pGame->pQt));
+        gfmGroup_free(&(pGame->pParticles));
+        gfmGroup_free(&(pGame->pCollideableParticles));
         gfm_free(&(pGame->pCtx));
     }
     if (pGame) {

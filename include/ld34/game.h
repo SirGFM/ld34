@@ -7,6 +7,7 @@
 #define __GAME_H__
 
 #include <GFraMe/gframe.h>
+#include <GFraMe/gfmGroup.h>
 #include <GFraMe/gfmInput.h>
 #include <GFraMe/gfmQuadtree.h>
 #include <GFraMe/gfmSpriteset.h>
@@ -24,6 +25,10 @@ typedef enum enState state;
 struct stGameCtx {
     /** The game context */
     gfmCtx *pCtx;
+    /** Particles used only for basic eye-candy */
+    gfmGroup *pParticles;
+    /** Particles used only for ~*awesome*~ eye-candy */
+    gfmGroup *pCollideableParticles;
     /** The quadtree for collision */
     gfmQuadtreeRoot *pQt;
     /** Current state */
@@ -100,12 +105,12 @@ extern void *pState;
 #define WNWDT 640
 #define WNHGT 480
 #define CAN_RESIZE 1
-#define BGCOLOR 0x000000
+#define BGCOLOR 0x332825
 #define TEXATLAS "atlas.bmp"
 #define COLORKEY 0xff00ff
 
-#define PL_VX 15.0
-#define PL_VY -50.0
+#define PL_VX 30.0
+#define PL_VY -52.5
 #define PL_JUMP_VX 25.0
 #define PL_JUMP_VY -80.0
 #define PL_HOLD_T 600
