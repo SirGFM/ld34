@@ -24,9 +24,59 @@
  */
 gameCtx *pGame;
 gameAssets *pAssets;
+gameButtons *pButtons;
 void *pState;
 
-gfmRV main_loop() {
+static gfmRV main_updateButtons() {
+    gfmRV rv;
+
+    rv = gfm_getKeyState(&(pButtons->left_leg.state), &(pButtons->left_leg.num),
+            pGame->pCtx, pButtons->left_leg.handle);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->right_leg.state),
+            &(pButtons->right_leg.num), pGame->pCtx,
+            pButtons->right_leg.handle);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->left_start.state),
+            &(pButtons->left_start.num), pGame->pCtx,
+            pButtons->left_start.handle);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->right_start.state),
+            &(pButtons->right_start.num), pGame->pCtx,
+            pButtons->right_start.handle);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->quit.state), &(pButtons->quit.num),
+            pGame->pCtx, pButtons->quit.handle);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->fullscreen.state),
+            &(pButtons->fullscreen.num), pGame->pCtx,
+            pButtons->fullscreen.handle);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    if (pButtons->quit.state == gfmInput_justReleased) {
+        rv = gfm_setQuitFlag(pGame->pCtx);
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+
+    if (pButtons->fullscreen.state == gfmInput_justReleased) {
+        if (pGame->isFullscreen) {
+            rv = gfm_setWindowed(pGame->pCtx);
+            ASSERT(rv == GFMRV_OK, rv);
+            pGame->isFullscreen = 0;
+        }
+        else {
+            rv = gfm_setFullscreen(pGame->pCtx);
+            ASSERT(rv == GFMRV_OK, rv);
+            pGame->isFullscreen = 1;
+        }
+    }
+
+    rv = GFMRV_OK;
+__ret:
+    return rv;
+}
+
+static gfmRV main_loop() {
     gfmRV rv;
 
     while (gfm_didGetQuitFlag(pGame->pCtx) != GFMRV_TRUE) {
@@ -49,6 +99,9 @@ gfmRV main_loop() {
 
         while (gfm_isUpdating(pGame->pCtx) == GFMRV_TRUE) {
             rv = gfm_fpsCounterUpdateBegin(pGame->pCtx);
+            ASSERT(rv == GFMRV_OK, rv);
+
+            rv = main_updateButtons();
             ASSERT(rv == GFMRV_OK, rv);
 
             /* Update the current state */
@@ -124,12 +177,19 @@ int main(int argc, char *argv[]) {
     /* Clean the game, so it's properly release on error */
     pGame = 0;
     pAssets = 0;
+    pButtons = 0;
+    pState = 0;
 
     /* Set all default values */
     config.dps = 60;
     config.fps = 60;
     config.vsync = 0;
     config.ups = 60;
+
+    /* Alloc the buttons struct */
+    pButtons = (gameButtons*)malloc(sizeof(gameButtons));
+    ASSERT(pButtons, GFMRV_ALLOC_FAILED);
+    memset(pButtons, 0x0, sizeof(gameButtons));
 
     /* Alloc the assets struct */
     pAssets = (gameAssets*)malloc(sizeof(gameAssets));
@@ -174,6 +234,68 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv);
     /* TODO Load audio assets */
 
+    /* Initialize all buttons */
+    rv = gfm_addVirtualKey(&(pButtons->left_leg.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->left_start.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->right_leg.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->right_start.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->fullscreen.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->quit.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfm_bindInput(pGame->pCtx, pButtons->left_leg.handle, gfmKey_f);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->left_leg.handle,
+            gfmController_l1, 0/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->left_leg.handle,
+            gfmController_l1, 1/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfm_bindInput(pGame->pCtx, pButtons->right_leg.handle, gfmKey_j);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->right_leg.handle,
+            gfmController_r1, 0/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->right_leg.handle,
+            gfmController_r1, 1/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfm_bindInput(pGame->pCtx, pButtons->left_start.handle, gfmKey_g);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->left_start.handle,
+            gfmController_select, 0/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->left_start.handle,
+            gfmController_select, 1/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfm_bindInput(pGame->pCtx, pButtons->right_start.handle, gfmKey_h);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->right_start.handle,
+            gfmController_start, 0/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->right_start.handle,
+            gfmController_start, 1/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfm_bindInput(pGame->pCtx, pButtons->fullscreen.handle, gfmKey_f12);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfm_bindInput(pGame->pCtx, pButtons->quit.handle, gfmKey_esc);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->quit.handle, gfmController_home,
+            0/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->quit.handle, gfmController_home,
+            1/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+
     rv = gfm_setFPS(pGame->pCtx, config.fps);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_setStateFrameRate(pGame->pCtx, config.ups, config.dps);
@@ -201,6 +323,9 @@ __ret:
     }
     if (pAssets) {
         free(pAssets);
+    }
+    if (pButtons) {
+        free(pButtons);
     }
 
     return rv;

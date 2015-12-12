@@ -8,6 +8,7 @@
 
 #include <GFraMe/gframe.h>
 #include <GFraMe/gfmSpriteset.h>
+#include <GFraMe/gfmInput.h>
 
 enum enState {
     state_none = 0,
@@ -29,8 +30,8 @@ struct stGameCtx {
      * next time it's run
      */
     state nextState;
-/* == BUTTONS =============================================================== */
-/* == STATE ================================================================= */
+    /** Whether in fullscreen or windowed mode */
+    int isFullscreen;
 };
 typedef struct stGameCtx gameCtx;
 
@@ -46,6 +47,26 @@ struct stGameAssets {
 };
 typedef struct stGameAssets gameAssets;
 
+struct stButton {
+    /** Internal button handle */
+    int handle;
+    /** Number of times it was consecutively pressed */
+    int num;
+    /** Current button state */
+    gfmInputState state;
+};
+typedef struct stButton button;
+
+struct stGameButtons {
+    button left_leg;
+    button left_start;
+    button right_start;
+    button right_leg;
+    button fullscreen;
+    button quit;
+};
+typedef struct stGameButtons gameButtons;
+
 struct stConfigCtx {
     int dps;
     int fps;
@@ -58,6 +79,8 @@ typedef struct stConfigCtx configCtx;
 extern gameCtx *pGame;
 /** All texture, spritesets and songs; Found on main.c */
 extern gameAssets *pAssets;
+/** All buttons; Found on main.c */
+extern gameButtons *pButtons;
 /** Currently running state; Found on main.c */
 extern void *pState;
 
