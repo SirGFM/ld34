@@ -32,7 +32,7 @@
 *.dSYM/
 
 # Random stuff...
-random_stuff
+game.log
 *assets/xcf
 *promo
 *bin
