@@ -153,13 +153,10 @@ static inline gfmRV player_moveLeg(gfmObject *pObj, button *pBt, int *pTime,
         rv = gfmObject_getVerticalVelocity(&vy, pObj);
         ASSERT(rv == GFMRV_OK, rv);
 
-        if (vy < -50.0) {
-            vy *= 0.5;
+        if (vy < 0.0) {
+            vy = 0.0;
         }
-        else if (vy < -30.0) {
-            vy *= 0.75;
-        }
-        rv = gfmObject_setVelocity(pObj, 0.0, vy);
+        rv = gfmObject_setVelocity(pObj, 0.0, 0.0);
         ASSERT(rv == GFMRV_OK, rv);
     }
     else if ((pBt->state & gfmInput_released) == gfmInput_released) {
@@ -468,8 +465,16 @@ gfmRV player_collideLimbFloor(player *pPlayer, int type, gfmObject *pFloor) {
     rv = gfmObject_collide(pObj, pFloor);
     ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
     if (rv == GFMRV_TRUE) {
-        rv = gfmObject_setVelocity(pObj, 0.0, 0.0);
+        gfmCollision dir;
+
+        rv = gfmObject_getCurrentCollision(&dir, pObj);
         ASSERT(rv == GFMRV_OK, rv);
+
+        /* Don't stop if was colliding horizontally */
+        if (dir == gfmCollision_down) {
+            rv = gfmObject_setVelocity(pObj, 0.0, 0.0);
+            ASSERT(rv == GFMRV_OK, rv);
+        }
     }
 
     rv = GFMRV_OK;
