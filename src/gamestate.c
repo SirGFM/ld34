@@ -185,10 +185,8 @@ gfmRV gamestate_update() {
         i++;
     }
 
-#if 0
     rv = gfmGroup_update(pGame->pParticles, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
-#endif
     rv = gfmGroup_update(pGame->pBullets, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmQuadtree_collideGroup(pGame->pQt, pGame->pBullets);
@@ -261,16 +259,14 @@ gfmRV gamestate_draw() {
         i++;
     }
 
-#if 0
+    rv = player_draw(pGamestate->pPlayer);
+    ASSERT(rv == GFMRV_OK, rv);
+
     rv = gfmGroup_draw(pGame->pParticles, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
-#endif
     rv = gfmGroup_draw(pGame->pBullets, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmGroup_draw(pGame->pProps, pGame->pCtx);
-    ASSERT(rv == GFMRV_OK, rv);
-
-    rv = player_draw(pGamestate->pPlayer);
     ASSERT(rv == GFMRV_OK, rv);
 
     rv = textManager_draw(pGame->pTextManager);

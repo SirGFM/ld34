@@ -7,6 +7,7 @@
 #include <GFraMe/gfmError.h>
 #include <GFraMe/gfmObject.h>
 #include <GFraMe/gfmQuadtree.h>
+#include <GFraMe/gfmSprite.h>
 #include <GFraMe/gfmSpriteset.h>
 
 #include <ld34/collide.h>
@@ -20,6 +21,28 @@
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))
 #  include <signal.h>
 #endif
+
+static inline gfmRV collide_spawnExplosion(gfmGroupNode *pCtx, gfmObject *pObj) {
+    gfmRV rv;
+    gfmSprite *pSpr;
+    int x, y;
+
+    rv = gfmGroup_removeNode(pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmObject_getPosition(&x, &y, pObj);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfmGroup_recycle(&pSpr, pGame->pParticles);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setPosition(pGame->pParticles, x, y);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setAnimation(pGame->pParticles, P_EXPLOSION);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = GFMRV_OK;
+__ret:
+    return rv;
+}
 
 /**
  * Push the colliding object away
@@ -227,11 +250,13 @@ gfmRV collide_run() {
             case PL_LOWER | (BULLET << 16):
             case PL_LEFT_LEG | (BULLET << 16):
             case PL_RIGHT_LEG | (BULLET << 16): {
+                rv = collide_spawnExplosion((gfmGroupNode*)pChild2, pObj2);
             } break;
             case BULLET | (PL_UPPER << 16):
             case BULLET | (PL_LOWER << 16):
             case BULLET | (PL_LEFT_LEG << 16):
             case BULLET | (PL_RIGHT_LEG << 16): {
+                rv = collide_spawnExplosion((gfmGroupNode*)pChild1, pObj1);
             } break;
             /* Hurt player or kill enemy */
             case PL_UPPER | (LIL_TANK << 16):

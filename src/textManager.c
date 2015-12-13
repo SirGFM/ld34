@@ -299,6 +299,8 @@ gfmRV textManager_postUpdate(textManager *pCtx) {
             pCtx->pCurEv = pCtx->pQueue;
             pCtx->pQueue = pCtx->pQueue->pNext;
 
+            pCtx->pCurEv = 0;
+
             rv = gfmString_getString(&pStr, pCtx->pCurEv->pString);
             ASSERT(rv == GFMRV_OK, rv);
             rv = gfmString_getLength(&len, pCtx->pCurEv->pString);

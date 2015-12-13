@@ -229,6 +229,22 @@ gfmRV player_preUpdate(player *pPlayer) {
         ASSERT(rv == GFMRV_OK, rv);
     }
 
+    /* Collide upper torso */
+    rv = gfmQuadtree_collideObject(pGame->pQt, pPlayer->upper_pTorso);
+    ASSERT(rv == GFMRV_QUADTREE_OVERLAPED || rv == GFMRV_QUADTREE_DONE, rv);
+    if (rv == GFMRV_QUADTREE_OVERLAPED) {
+        rv = collide_run();
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+
+    /* Collide lower torso */
+    rv = gfmQuadtree_collideObject(pGame->pQt, pPlayer->lower_pTorso);
+    ASSERT(rv == GFMRV_QUADTREE_OVERLAPED || rv == GFMRV_QUADTREE_DONE, rv);
+    if (rv == GFMRV_QUADTREE_OVERLAPED) {
+        rv = collide_run();
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+
     rv = GFMRV_OK;
 __ret:
     return rv;

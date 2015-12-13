@@ -30,10 +30,11 @@ gameButtons *pButtons;
 void *pState;
 
 static int grp_anim_data[] = {
-              /* len|fps|loop|data... */
-/* BULLET  */    16 , 8 , 0  , 68,69,70,69,70,69,70,69,70,69,70,69,70,69,70,69,
-/* PELLET1 */     1 , 0 , 0  , 71,
-/* PELLET2 */     1 , 0 , 0  , 72
+              /*   len|fps|loop|data... */
+/* BULLET    */    16 , 12, 0  , 68,69,70,69,70,69,70,69,70,69,70,69,70,69,70,69,
+/* PELLET1   */     1 , 0 , 0  , 71,
+/* PELLET2   */     1 , 0 , 0  , 72,
+/* EXPLOSION */     8 , 16, 0  , 73,74,75,76,77,77,77,77
 };
 static int grp_anim_dataLen = sizeof(grp_anim_data) / sizeof(int);
 
@@ -397,20 +398,19 @@ int main(int argc, char *argv[]) {
     /* Create all particles groups */
     rv = gfmGroup_getNew(&(pGame->pParticles));
     ASSERT(rv == GFMRV_OK, rv);
-#if 0
     rv = gfmGroup_setDefType(pGame->pParticles, BULLET);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmGroup_setDefSpriteset(pGame->pParticles, pAssets->pSset8x8);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDefAnimData(pGame->pParticles, int *pData, int len);
-    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setDefAnimData(pGame->pParticles, grp_anim_data,
+            grp_anim_dataLen);
     rv = gfmGroup_setDefDimensions(pGame->pParticles, 2, 2, -3, -3);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmGroup_setDefVelocity(pGame->pParticles, 0, 0);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmGroup_setDefAcceleration(pGame->pParticles, 0, 0);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDeathOnLeave(pGame->pParticles, 0);
+    rv = gfmGroup_setDeathOnLeave(pGame->pParticles, 1);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmGroup_setDeathOnTime(pGame->pParticles, PARTICLE_TTL);
     ASSERT(rv == GFMRV_OK, rv);
@@ -418,7 +418,6 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmGroup_preCache(pGame->pParticles, NUM_PARTICLES, NUM_PARTICLES);
     ASSERT(rv == GFMRV_OK, rv);
-#endif
 
     rv = gfmGroup_getNew(&(pGame->pBullets));
     ASSERT(rv == GFMRV_OK, rv);

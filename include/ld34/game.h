@@ -26,7 +26,8 @@ typedef enum enState state;
 enum enParticles {
     P_BULLET = 0,
     P_PELLET1,
-    P_PELLET2
+    P_PELLET2,
+    P_EXPLOSION,
 };
 
 /** The main game struct */
