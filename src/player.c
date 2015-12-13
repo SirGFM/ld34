@@ -335,6 +335,9 @@ gfmRV player_postUpdate(player *pPlayer) {
 
     if (!(l_last & gfmCollision_down) && (l_cur & gfmCollision_down)) {
         pPlayer->left_elapsedSinceStep = 0;
+
+        rv = gfm_playAudio(0, pGame->pCtx, pAssets->sfxLeftStep, 0.3);
+        ASSERT(rv == GFMRV_OK, rv);
     }
     else {
         pPlayer->left_elapsedSinceStep += elapsed;
@@ -342,6 +345,9 @@ gfmRV player_postUpdate(player *pPlayer) {
 
     if (!(r_last & gfmCollision_down) && (r_cur & gfmCollision_down)) {
         pPlayer->right_elapsedSinceStep = 0;
+
+        rv = gfm_playAudio(0, pGame->pCtx, pAssets->sfxRightStep, 0.3);
+        ASSERT(rv == GFMRV_OK, rv);
     }
     else {
         pPlayer->right_elapsedSinceStep += elapsed;

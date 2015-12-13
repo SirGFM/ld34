@@ -77,6 +77,9 @@ struct stGameAssets {
     int audBass1;
     int audBass2;
     int audMelody;
+
+    int sfxLeftStep;
+    int sfxRightStep;
 };
 typedef struct stGameAssets gameAssets;
 

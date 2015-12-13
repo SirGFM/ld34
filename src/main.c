@@ -344,6 +344,13 @@ int main(int argc, char *argv[]) {
     rv = gfm_loadAudio(&(pAssets->audMelody), pGame->pCtx, "melody.mml", 10);
     ASSERT(rv == GFMRV_OK, rv);
 
+#define LOAD_SFX(var, name) \
+    rv = gfm_loadAudio(&(pAssets->sfx##var), pGame->pCtx, name, \
+            sizeof(name) - 1); \
+    ASSERT(rv == GFMRV_OK, rv)
+    LOAD_SFX(LeftStep, "left_step.wav");
+    LOAD_SFX(RightStep, "right_step.wav");
+
     /* Initialize all buttons */
     rv = gfm_addVirtualKey(&(pButtons->left_leg.handle), pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
