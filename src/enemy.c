@@ -158,6 +158,11 @@ __ret:
     return rv;
 }
 
+/**
+ * Change state after all collisions
+ *
+ * @param  [ in]pEnemy  The enemy
+ */
 gfmRV enemy_postUpdate(enemy *pEnemy) {
     gfmRV rv;
 

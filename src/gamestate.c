@@ -182,6 +182,7 @@ gfmRV gamestate_update() {
 #if 0
     rv = gfmGroup_update(pGame->pParticles, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
+#endif
     rv = gfmGroup_update(pGame->pCollideableParticles, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmQuadtree_collideGroup(pGame->pQt, pGame->pCollideableParticles);
@@ -190,7 +191,6 @@ gfmRV gamestate_update() {
         rv = collide_run();
         ASSERT(rv == GFMRV_OK, rv);
     }
-#endif
 
     rv = player_preUpdate(pGamestate->pPlayer);
     ASSERT(rv == GFMRV_OK, rv);
@@ -224,7 +224,7 @@ gfmRV gamestate_draw() {
 
     pGamestate = (gamestate*)pState;
 
-    /* TODO Render the game */
+    /* Render the game */
     rv = gfmTilemap_draw(pGamestate->pTm, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
 
@@ -239,6 +239,13 @@ gfmRV gamestate_draw() {
 
         i++;
     }
+
+#if 0
+    rv = gfmGroup_update(pGame->pParticles, pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+#endif
+    rv = gfmGroup_update(pGame->pCollideableParticles, pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
 
     rv = player_draw(pGamestate->pPlayer);
     ASSERT(rv == GFMRV_OK, rv);
