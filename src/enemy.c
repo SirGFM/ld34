@@ -183,15 +183,15 @@ gfmRV enemy_preUpdate(enemy *pEnemy) {
 
                 if (i % 4 == 0) {
                     vx = 0;
-                    vy = 50 * (1 - 2 * (i == 0));
+                    vy = 75 * (1 - 2 * (i == 0));
                 }
                 else if (i % 4 == 2) {
-                    vx = 50 * (1 - 2 * (i == 0));
+                    vx = 75 * (1 - 2 * (i == 0));
                     vy = 0;
                 }
                 else {
-                    vx = 50 * 0.707106781 * (1 - 2 * (i > 4));
-                    vy = 50 * 0.707106781 * (1 - 2 * (((i + 1) % 8) > 4));
+                    vx = 75 * 0.707106781 * (1 - 2 * (i > 4));
+                    vy = 75 * 0.707106781 * (1 - 2 * (((i + 1) % 8) > 4));
                 }
 
                 rv = gfmSprite_getPosition(&x, &y, pEnemy->pSpr);
@@ -447,6 +447,56 @@ gfmRV enemy_collideFloor(enemy *pEnemy, gfmObject *pFloor) {
         }
         if (dir & gfmCollision_hor) {
             pEnemy->switchDir = 1;
+        }
+    }
+
+    rv = GFMRV_OK;
+__ret:
+    return rv;
+}
+
+/**
+ * Check if actually got hurt by player
+ *
+ * @param  [ in]pEnemy The enemy
+ * @param  [ in]vy     Player's velocity
+ */
+gfmRV enemy_getHurt(enemy *pEnemy, double vy) {
+    gfmRV rv;
+
+    if (vy > 10.0) {
+        if (!pEnemy->isHurt) {
+            pEnemy->isHurt = 1;
+        }
+    }
+    else {
+        switch (pEnemy->type) {
+            case LIL_TANK: {
+                gfmCollision dir;
+
+                /* Wasn't stompped, face player and shoot */
+                rv = gfmSprite_getCurrentCollision(&dir, pEnemy->pSpr);
+                ASSERT(rv == GFMRV_OK, rv);
+
+                if (dir & gfmCollision_left) {
+                    rv = gfmSprite_setDirection(pEnemy->pSpr, 1/*flipped*/);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmSprite_setHorizontalVelocity(pEnemy->pSpr, LIL_TANK_VX);
+                    ASSERT(rv == GFMRV_OK, rv);
+                }
+                else {
+                    rv = gfmSprite_setDirection(pEnemy->pSpr, 0/*flipped*/);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmSprite_setHorizontalVelocity(pEnemy->pSpr, -LIL_TANK_VX);
+                    ASSERT(rv == GFMRV_OK, rv);
+                }
+
+                if (pEnemy->timeToAction > LIL_TANK_TIME_TO_STRIKE_BACK) {
+                    pEnemy->timeToAction = LIL_TANK_TIME_TO_STRIKE_BACK;
+                }
+                pEnemy->num = LIL_TANK_NUM_SHOOTS;
+            } break;
+            default: {}
         }
     }
 
