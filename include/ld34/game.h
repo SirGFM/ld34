@@ -80,6 +80,8 @@ struct stGameAssets {
 
     int sfxLeftStep;
     int sfxRightStep;
+    int sfxEnemyCrushed;
+    int sfxEnemyExplosion;
 };
 typedef struct stGameAssets gameAssets;
 

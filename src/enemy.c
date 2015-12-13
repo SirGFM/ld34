@@ -210,6 +210,8 @@ gfmRV enemy_preUpdate(enemy *pEnemy) {
             }
 
             pEnemy->isHurt = 3;
+            rv = gfm_playAudio(0, pGame->pCtx, pAssets->sfxEnemyExplosion, 0.4);
+            ASSERT(rv == GFMRV_OK, rv);
         }
 
         return GFMRV_OK;
@@ -467,6 +469,9 @@ gfmRV enemy_getHurt(enemy *pEnemy, double vy) {
     if (vy > 10.0) {
         if (!pEnemy->isHurt) {
             pEnemy->isHurt = 1;
+
+            rv = gfm_playAudio(0, pGame->pCtx, pAssets->sfxEnemyCrushed, 0.4);
+            ASSERT(rv == GFMRV_OK, rv);
         }
     }
     else {

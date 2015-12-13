@@ -350,6 +350,8 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv)
     LOAD_SFX(LeftStep, "left_step.wav");
     LOAD_SFX(RightStep, "right_step.wav");
+    LOAD_SFX(EnemyCrushed, "ene_crushed.wav");
+    LOAD_SFX(EnemyExplosion, "ene_explosion.wav");
 
     /* Initialize all buttons */
     rv = gfm_addVirtualKey(&(pButtons->left_leg.handle), pGame->pCtx);
