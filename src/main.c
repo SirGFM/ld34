@@ -490,6 +490,7 @@ int main(int argc, char *argv[]) {
 
     /* TODO Set the main state as the intro */
     pGame->nextState = state_game;
+    pGame->run = 1;
 
     rv = gfmQuadtree_getNew(&(pGame->pQt));
     ASSERT(rv == GFMRV_OK, rv);

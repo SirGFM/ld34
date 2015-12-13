@@ -156,6 +156,7 @@ gfmRV collide_run() {
 
         rv = GFMRV_OK;
         switch (orType) {
+            /* Filter those collisions */
             case PL_UPPER | (PL_UPPER << 16):
             case PL_UPPER | (PL_LOWER << 16):
             case PL_UPPER | (PL_LEFT_LEG << 16):
@@ -184,9 +185,8 @@ gfmRV collide_run() {
             case BULLET | (PROP << 16):
             case LIL_TANK | (BULLET << 16):
             case PROP | (BULLET << 16):
-            {
-                /* Filter this collision */
-            } break;
+            break;
+            /* Collide against floor */
             case PL_LEFT_LEG | (FLOOR << 16):
             case PL_RIGHT_LEG | (FLOOR << 16): {
                 rv = player_collideLimbFloor((player*)pChild1, type1, pObj2);
@@ -195,6 +195,7 @@ gfmRV collide_run() {
             case FLOOR | (PL_RIGHT_LEG << 16): {
                 rv = player_collideLimbFloor((player*)pChild2, type2, pObj1);
             } break;
+            /* Walk over pellets */
             case PL_LEFT_LEG | (PROP << 16):
             case PL_RIGHT_LEG | (PROP << 16): {
                 rv = gfmObject_setFixed(pObj2);
@@ -211,18 +212,43 @@ gfmRV collide_run() {
                 ASSERT(rv == GFMRV_OK, rv);
                 rv = gfmObject_setMovable(pObj1);
             } break;
+            /* Hurt player */
+            case PL_UPPER | (BULLET << 16):
+            case PL_LOWER | (BULLET << 16):
+            case PL_LEFT_LEG | (BULLET << 16):
+            case PL_RIGHT_LEG | (BULLET << 16): {
+            } break;
+            case BULLET | (PL_UPPER << 16):
+            case BULLET | (PL_LOWER << 16):
+            case BULLET | (PL_LEFT_LEG << 16):
+            case BULLET | (PL_RIGHT_LEG << 16): {
+            } break;
+            /* Hurt player or kill enemy */
+            case PL_UPPER | (LIL_TANK << 16):
+            case PL_LOWER | (LIL_TANK << 16):
+            case PL_LEFT_LEG | (LIL_TANK << 16):
+            case PL_RIGHT_LEG | (LIL_TANK << 16): {
+            } break;
+            case LIL_TANK | (PL_UPPER << 16):
+            case LIL_TANK | (PL_LOWER << 16):
+            case LIL_TANK | (PL_LEFT_LEG << 16):
+            case LIL_TANK | (PL_RIGHT_LEG << 16): {
+            } break;
+            /* Collide LIL_TANK with floor */
             case LIL_TANK | (FLOOR << 16): {
                 rv = enemy_collideFloor((enemy*)pChild1, pObj2);
             } break;
             case FLOOR | (LIL_TANK << 16): {
                 rv = enemy_collideFloor((enemy*)pChild2, pObj1);
             } break;
+            /* Make LIL_TANK push pellets */
             case LIL_TANK | (PROP << 16): {
                 rv = collide_pushObject(pObj1, pObj2);
             } break;
             case PROP | (LIL_TANK << 16): {
                 rv = collide_pushObject(pObj2, pObj1);
             } break;
+            /* Bounce pellets off floor and itsef */
             case FLOOR | (PROP << 16): {
                 rv = collide_bounceOff(pObj2, pObj1);
             } break;
