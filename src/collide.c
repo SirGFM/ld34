@@ -14,6 +14,8 @@
 #include <ld34/game.h>
 #include <ld34/player.h>
 
+#include <stdlib.h>
+
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))
 #  include <signal.h>
 #endif
@@ -63,10 +65,14 @@ gfmRV collide_run() {
             case PL_UPPER | (PL_LOWER << 16):
             case PL_UPPER | (PL_LEFT_LEG << 16):
             case PL_UPPER | (PL_RIGHT_LEG << 16):
+            case PL_UPPER | (FLOOR << 16):
+            case PL_UPPER | (PROP << 16):
             case PL_LOWER | (PL_UPPER << 16):
             case PL_LOWER | (PL_LOWER << 16):
             case PL_LOWER | (PL_LEFT_LEG << 16):
             case PL_LOWER | (PL_RIGHT_LEG << 16):
+            case PL_LOWER | (FLOOR << 16):
+            case PL_LOWER | (PROP << 16):
             case PL_LEFT_LEG | (PL_UPPER << 16):
             case PL_LEFT_LEG | (PL_LOWER << 16):
             case PL_LEFT_LEG | (PL_LEFT_LEG << 16):
@@ -74,14 +80,18 @@ gfmRV collide_run() {
             case PL_RIGHT_LEG | (PL_UPPER << 16):
             case PL_RIGHT_LEG | (PL_LOWER << 16):
             case PL_RIGHT_LEG | (PL_LEFT_LEG << 16):
-            case PL_RIGHT_LEG | (PL_RIGHT_LEG << 16): {
-                /* Do nothing on self collision */
-            } break;
-            case PL_UPPER | (FLOOR << 16):
-            case PL_LOWER | (FLOOR << 16):
+            case PL_RIGHT_LEG | (PL_RIGHT_LEG << 16):
             case FLOOR | (PL_UPPER << 16):
-            case FLOOR | (PL_LOWER << 16): {
-                /* Do nothing if the body collides with the floor */
+            case FLOOR | (PL_LOWER << 16):
+            case BULLET | (LIL_TANK << 16):
+            case BULLET | (BULLET << 16):
+            case BULLET | (PROP << 16):
+            case LIL_TANK | (BULLET << 16):
+            case PROP | (BULLET << 16):
+            case LIL_TANK | (PROP << 16):
+            case PROP | (LIL_TANK << 16):
+            {
+                /* Filter this collision */
             } break;
             case PL_LEFT_LEG | (FLOOR << 16):
             case PL_RIGHT_LEG | (FLOOR << 16): {
@@ -96,6 +106,47 @@ gfmRV collide_run() {
             } break;
             case FLOOR | (LIL_TANK << 16): {
                 rv = enemy_collideFloor((enemy*)pChild2, pObj1);
+            } break;
+            case FLOOR | (PROP << 16): {
+                double vx, vy;
+
+                rv = gfmObject_collide(pObj1, pObj2);
+                ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
+
+                rv = gfmObject_getVelocity(&vx, &vy, pObj2);
+                ASSERT(rv == GFMRV_OK, rv);
+
+                rv = gfmObject_setVelocity(pObj2, vx * 0.75, -abs(vy) * 0.25 -
+                        0.1);
+            } break;
+            case PROP | (FLOOR << 16): {
+                double vx, vy;
+
+                rv = gfmObject_collide(pObj1, pObj2);
+                ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
+
+                rv = gfmObject_getVelocity(&vx, &vy, pObj1);
+                ASSERT(rv == GFMRV_OK, rv);
+
+                rv = gfmObject_setVelocity(pObj1, vx * 0.25, -abs(vy) * 0.25 -
+                        0.1);
+            } break;
+            case PROP | (PROP << 16): {
+                double vx1, vx2, vy1, vy2;
+
+                rv = gfmObject_collide(pObj1, pObj2);
+                ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
+
+                rv = gfmObject_getVelocity(&vx1, &vy1, pObj1);
+                ASSERT(rv == GFMRV_OK, rv);
+                rv = gfmObject_getVelocity(&vx2, &vy2, pObj2);
+                ASSERT(rv == GFMRV_OK, rv);
+
+                rv = gfmObject_setVelocity(pObj1, vx1 * 0.5, -abs(vy2) * 0.25 -
+                        0.1);
+                ASSERT(rv == GFMRV_OK, rv);
+                rv = gfmObject_setVelocity(pObj2, vx2 * 0.5, -abs(vy1) * 0.25 -
+                        0.1);
             } break;
             default: {
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))

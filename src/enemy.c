@@ -25,6 +25,8 @@ struct stEnemy {
     gfmSprite *pSpr;
     int timeToAction;
     int switchDir;
+    int num;
+    int type;
 };
 
 /**
@@ -114,10 +116,13 @@ gfmRV enemy_init(enemy *pEnemy, gfmParser *pParser, int type) {
             rv = gfmSprite_setAcceleration(pEnemy->pSpr, 0.0, GRAV);
             ASSERT(rv == GFMRV_OK, rv);
 
-            pEnemy->timeToAction = 5000;
+            pEnemy->timeToAction = LIL_TANK_BETWEEN_SHOOT;
+            pEnemy->num = LIL_TANK_NUM_SHOOTS;
         } break;
         default: {}
     }
+
+    pEnemy->type = type;
 
     rv = GFMRV_OK;
 __ret:
@@ -140,7 +145,78 @@ gfmRV enemy_preUpdate(enemy *pEnemy) {
         pEnemy->timeToAction -= elapsed;
     }
     else {
-        /* TODO Do next action */
+        /* Do next action */
+        switch (pEnemy->type) {
+            case LIL_TANK: {
+                int flipped;
+
+                rv = gfmSprite_getDirection(&flipped, pEnemy->pSpr);
+                ASSERT(rv == GFMRV_OK, rv);
+
+                if (pEnemy->num > 0) {
+                    gfmSprite *pSpr;
+                    int vx, vy, x, y;
+
+                    rv = gfmSprite_setHorizontalVelocity(pEnemy->pSpr, 0.0);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmSprite_getPosition(&x, &y, pEnemy->pSpr);
+                    ASSERT(rv == GFMRV_OK, rv);
+
+                    if (flipped) {
+                        x += 8;
+                        vx = 40;
+                    }
+                    else {
+                        x -= 4;
+                        vx = -40;
+                    }
+                    vy = -30;
+
+                    /* Spawn a bullet */
+                    rv = gfmGroup_recycle(&pSpr, pGame->pBullets);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setPosition(pGame->pBullets, x, y-1);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setAnimation(pGame->pBullets, P_BULLET);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setVelocity(pGame->pBullets, vx, vy);
+                    ASSERT(rv == GFMRV_OK, rv);
+
+                    /* Spawn a pellet */
+                    rv = gfmGroup_recycle(&pSpr, pGame->pProps);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setPosition(pGame->pProps, x, y-1);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setAnimation(pGame->pProps, P_PELLET1);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setVelocity(pGame->pProps, -vx, vy);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setAcceleration(pGame->pProps, 0, GRAV);
+                    ASSERT(rv == GFMRV_OK, rv);
+
+
+                    pEnemy->timeToAction = LIL_TANK_BETWEEN_SHOOT;
+                    pEnemy->num--;
+                }
+                else {
+                    double vx;
+
+                    if (flipped) {
+                        vx = -LIL_TANK_VX;
+                    }
+                    else {
+                        vx = LIL_TANK_VX;
+                    }
+
+                    rv = gfmSprite_setHorizontalVelocity(pEnemy->pSpr, vx);
+                    ASSERT(rv == GFMRV_OK, rv);
+
+                    pEnemy->timeToAction = LIL_TIME_TO_SHOOT;
+                    pEnemy->num = LIL_TANK_NUM_SHOOTS;
+                }
+            } break;
+            default: {}
+        }
     }
 
     rv = gfmSprite_update(pEnemy->pSpr, pGame->pCtx);

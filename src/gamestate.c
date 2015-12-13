@@ -183,9 +183,18 @@ gfmRV gamestate_update() {
     rv = gfmGroup_update(pGame->pParticles, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
 #endif
-    rv = gfmGroup_update(pGame->pCollideableParticles, pGame->pCtx);
+    rv = gfmGroup_update(pGame->pBullets, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmQuadtree_collideGroup(pGame->pQt, pGame->pCollideableParticles);
+    rv = gfmQuadtree_collideGroup(pGame->pQt, pGame->pBullets);
+    ASSERT(rv == GFMRV_QUADTREE_OVERLAPED || rv == GFMRV_QUADTREE_DONE, rv);
+    if (rv == GFMRV_QUADTREE_OVERLAPED) {
+        rv = collide_run();
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+
+    rv = gfmGroup_update(pGame->pProps, pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmQuadtree_collideGroup(pGame->pQt, pGame->pProps);
     ASSERT(rv == GFMRV_QUADTREE_OVERLAPED || rv == GFMRV_QUADTREE_DONE, rv);
     if (rv == GFMRV_QUADTREE_OVERLAPED) {
         rv = collide_run();
@@ -241,10 +250,12 @@ gfmRV gamestate_draw() {
     }
 
 #if 0
-    rv = gfmGroup_update(pGame->pParticles, pGame->pCtx);
+    rv = gfmGroup_draw(pGame->pParticles, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
 #endif
-    rv = gfmGroup_update(pGame->pCollideableParticles, pGame->pCtx);
+    rv = gfmGroup_draw(pGame->pBullets, pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_draw(pGame->pProps, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
 
     rv = player_draw(pGamestate->pPlayer);

@@ -31,9 +31,9 @@ void *pState;
 
 static int grp_anim_data[] = {
               /* len|fps|loop|data... */
-/* BULLET  */    17 , 8 , 0  , 132,133,134,133,134,133,134,133,134,133,134,133,134,133,134,133,134,
-/* PELLET1 */     1 , 0 , 0  , 135,
-/* PELLET2 */     1 , 0 , 0  , 136
+/* BULLET  */    16 , 8 , 0  , 68,69,70,69,70,69,70,69,70,69,70,69,70,69,70,69,
+/* PELLET1 */     1 , 0 , 0  , 71,
+/* PELLET2 */     1 , 0 , 0  , 72
 };
 static int grp_anim_dataLen = sizeof(grp_anim_data) / sizeof(int);
 
@@ -404,11 +404,11 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmGroup_setDefAnimData(pGame->pParticles, int *pData, int len);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDefDimensions(pGame->pParticles, 2, 2, -2, -2);
+    rv = gfmGroup_setDefDimensions(pGame->pParticles, 2, 2, -3, -3);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmGroup_setDefVelocity(pGame->pParticles, 0, 0);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDefAcceleration(pGame->pParticles, 0, GRAV);
+    rv = gfmGroup_setDefAcceleration(pGame->pParticles, 0, 0);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmGroup_setDeathOnLeave(pGame->pParticles, 0);
     ASSERT(rv == GFMRV_OK, rv);
@@ -420,37 +420,67 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv);
 #endif
 
-    rv = gfmGroup_getNew(&(pGame->pCollideableParticles));
+    rv = gfmGroup_getNew(&(pGame->pBullets));
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDefType(pGame->pCollideableParticles, BULLET);
+    rv = gfmGroup_setDefType(pGame->pBullets, BULLET);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDefSpriteset(pGame->pCollideableParticles,
-            pAssets->pSset8x8);
+    rv = gfmGroup_setDefSpriteset(pGame->pBullets, pAssets->pSset8x8);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDefAnimData(pGame->pCollideableParticles, grp_anim_data,
+    rv = gfmGroup_setDefAnimData(pGame->pBullets, grp_anim_data,
             grp_anim_dataLen);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDefDimensions(pGame->pCollideableParticles, 2, 2, -2, -2);
+    rv = gfmGroup_setDefDimensions(pGame->pBullets, 2, 2, -3, -3);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDefVelocity(pGame->pCollideableParticles, 0, 0);
+    rv = gfmGroup_setDefVelocity(pGame->pBullets, 0, 0);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDefAcceleration(pGame->pCollideableParticles, 0, GRAV);
+    rv = gfmGroup_setDefAcceleration(pGame->pBullets, 0, 0);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDeathOnLeave(pGame->pCollideableParticles, 0);
+    rv = gfmGroup_setDeathOnLeave(pGame->pBullets, 0);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDeathOnTime(pGame->pCollideableParticles, PARTICLE_TTL);
+    rv = gfmGroup_setDeathOnTime(pGame->pBullets, PARTICLE_TTL);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_setDrawOrder(pGame->pCollideableParticles,
-            gfmDrawOrder_linear);
+    rv = gfmGroup_setDrawOrder(pGame->pBullets, gfmDrawOrder_linear);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmGroup_preCache(pGame->pCollideableParticles, NUM_PARTICLES,
-            NUM_PARTICLES);
+    rv = gfmGroup_preCache(pGame->pBullets, NUM_PARTICLES, NUM_PARTICLES);
     ASSERT(rv == GFMRV_OK, rv);
 #if 0
     /* This would be a terrible idea (so, I really want to enable it :D) */
-    rv = gfmGroup_setCollisionQuality(pGame->pParticles, gfmCollisionQuality_collideEverything);
+    rv = gfmGroup_setCollisionQuality(pGame->pBullets,
+            gfmCollisionQuality_collideEverything);
 #endif
-    rv = gfmGroup_setCollisionQuality(pGame->pParticles, gfmCollisionQuality_visibleOnly);
+    rv = gfmGroup_setCollisionQuality(pGame->pBullets,
+            gfmCollisionQuality_visibleOnly);
+
+    rv = gfmGroup_getNew(&(pGame->pProps));
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setDefType(pGame->pProps, PROP);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setDefSpriteset(pGame->pProps, pAssets->pSset8x8);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setDefAnimData(pGame->pProps, grp_anim_data,
+            grp_anim_dataLen);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setDefDimensions(pGame->pProps, 2, 2, -3, -3);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setDefVelocity(pGame->pProps, 0, 0);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setDefAcceleration(pGame->pProps, 0, 0);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setDeathOnLeave(pGame->pProps, 0);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setDeathOnTime(pGame->pProps, PARTICLE_TTL);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_setDrawOrder(pGame->pProps, gfmDrawOrder_linear);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_preCache(pGame->pProps, NUM_PARTICLES, NUM_PARTICLES);
+    ASSERT(rv == GFMRV_OK, rv);
+#if 0
+    /* This would be a terrible idea (so, I really want to enable it :D) */
+    rv = gfmGroup_setCollisionQuality(pGame->pProps,
+            gfmCollisionQuality_collideEverything);
+#endif
+    rv = gfmGroup_setCollisionQuality(pGame->pProps,
+            gfmCollisionQuality_visibleOnly);
     ASSERT(rv == GFMRV_OK, rv);
 
 #ifdef DEBUG
@@ -473,7 +503,8 @@ __ret:
         /* TODO Free everything else */
         gfmQuadtree_free(&(pGame->pQt));
         gfmGroup_free(&(pGame->pParticles));
-        gfmGroup_free(&(pGame->pCollideableParticles));
+        gfmGroup_free(&(pGame->pBullets));
+        gfmGroup_free(&(pGame->pProps));
         gfm_free(&(pGame->pCtx));
     }
     if (pGame) {

@@ -21,6 +21,12 @@ enum enState {
 };
 typedef enum enState state;
 
+enum enParticles {
+    P_BULLET = 0,
+    P_PELLET1,
+    P_PELLET2
+};
+
 /** The main game struct */
 struct stGameCtx {
     /** The game context */
@@ -28,7 +34,9 @@ struct stGameCtx {
     /** Particles used only for basic eye-candy */
     gfmGroup *pParticles;
     /** Particles used only for ~*awesome*~ eye-candy */
-    gfmGroup *pCollideableParticles;
+    gfmGroup *pBullets;
+    /** Particles used only for ~*awesome*~ eye-candy */
+    gfmGroup *pProps;
     /** The quadtree for collision */
     gfmQuadtreeRoot *pQt;
     /** Current state */
@@ -128,6 +136,9 @@ extern void *pState;
 #define PL_MAX_DIST 22
 
 #define LIL_TANK_VX -40.0
+#define LIL_TIME_TO_SHOOT 5000
+#define LIL_TANK_BETWEEN_SHOOT 300
+#define LIL_TANK_NUM_SHOOTS 5
 
 #define PL_UPPER     gfmType_reserved_2
 #define PL_LOWER     gfmType_reserved_3
