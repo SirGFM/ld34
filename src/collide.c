@@ -20,6 +20,101 @@
 #  include <signal.h>
 #endif
 
+/**
+ * Push the colliding object away
+ *
+ * @param  [ in]pSelf The current object
+ * @param  [ in]pObj  The other object
+ */
+gfmRV collide_pushObject(gfmObject *pSelf, gfmObject *pObj) {
+    gfmRV rv;
+
+    rv = gfmObject_setFixed(pSelf);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmObject_collide(pSelf, pObj);
+    ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
+    rv = gfmObject_setMovable(pSelf);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = GFMRV_OK;
+__ret:
+    return rv;
+}
+
+gfmRV collide_bounceOff(gfmObject *pSelf, gfmObject *pObj) {
+    gfmRV rv;
+
+    rv = gfmObject_collide(pSelf, pObj);
+    ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
+
+    if (rv == GFMRV_TRUE) {
+        double vx, vy;
+
+        rv = gfmObject_getVelocity(&vx, &vy, pObj);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        rv = gfmObject_setVelocity(pSelf, vx * 0.75, -abs(vy) * 0.5 - 0.1);
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+
+    rv = GFMRV_OK;
+__ret:
+    return rv;
+}
+
+gfmRV collide_elastic(gfmObject *pObj1, gfmObject *pObj2) {
+    gfmRV rv;
+    int x1, x2, y1, y2;
+    double vx1, vx2, vy1, vy2;
+
+    rv = gfmObject_getPosition(&x1, &y1, pObj1);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmObject_getPosition(&x2, &y2, pObj2);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    if (y1 > y2) {
+        rv = gfmObject_setFixed(pObj1);
+    }
+    else {
+        rv = gfmObject_setFixed(pObj2);
+    }
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfmObject_collide(pObj1, pObj2);
+    ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
+
+    if (y1 > y2) {
+        rv = gfmObject_setMovable(pObj1);
+    }
+    else {
+        rv = gfmObject_setMovable(pObj2);
+    }
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfmObject_getVelocity(&vx1, &vy1, pObj1);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmObject_getVelocity(&vx2, &vy2, pObj2);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfmObject_setVelocity(pObj1, -vx2 * 0.5, -abs(vy2) * 0.5 - 0.1);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmObject_setVelocity(pObj2, -vx1 * 0.5, -abs(vy1) * 0.5 - 0.1);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = GFMRV_OK;
+__ret:
+    if (rv != GFMRV_OK) {
+        if (y1 > y2) {
+            gfmObject_setMovable(pObj1);
+        }
+        else {
+            gfmObject_setMovable(pObj2);
+        }
+    }
+
+    return rv;
+}
+
 static inline gfmRV collide_getSubtype(void **ppObj, int *pType, gfmObject *pObj) {
     gfmRV rv;
 
@@ -83,13 +178,12 @@ gfmRV collide_run() {
             case PL_RIGHT_LEG | (PL_RIGHT_LEG << 16):
             case FLOOR | (PL_UPPER << 16):
             case FLOOR | (PL_LOWER << 16):
+            case FLOOR | (FLOOR << 16):
             case BULLET | (LIL_TANK << 16):
             case BULLET | (BULLET << 16):
             case BULLET | (PROP << 16):
             case LIL_TANK | (BULLET << 16):
             case PROP | (BULLET << 16):
-            case LIL_TANK | (PROP << 16):
-            case PROP | (LIL_TANK << 16):
             {
                 /* Filter this collision */
             } break;
@@ -101,52 +195,42 @@ gfmRV collide_run() {
             case FLOOR | (PL_RIGHT_LEG << 16): {
                 rv = player_collideLimbFloor((player*)pChild2, type2, pObj1);
             } break;
+            case PL_LEFT_LEG | (PROP << 16):
+            case PL_RIGHT_LEG | (PROP << 16): {
+                rv = gfmObject_setFixed(pObj2);
+                ASSERT(rv == GFMRV_OK, rv);
+                rv = player_collideLimbFloor((player*)pChild1, type1, pObj2);
+                ASSERT(rv == GFMRV_OK, rv);
+                rv = gfmObject_setMovable(pObj2);
+            } break;
+            case PROP | (PL_LEFT_LEG << 16):
+            case PROP | (PL_RIGHT_LEG << 16): {
+                rv = gfmObject_setFixed(pObj1);
+                ASSERT(rv == GFMRV_OK, rv);
+                rv = player_collideLimbFloor((player*)pChild2, type2, pObj1);
+                ASSERT(rv == GFMRV_OK, rv);
+                rv = gfmObject_setMovable(pObj1);
+            } break;
             case LIL_TANK | (FLOOR << 16): {
                 rv = enemy_collideFloor((enemy*)pChild1, pObj2);
             } break;
             case FLOOR | (LIL_TANK << 16): {
                 rv = enemy_collideFloor((enemy*)pChild2, pObj1);
             } break;
+            case LIL_TANK | (PROP << 16): {
+                rv = collide_pushObject(pObj1, pObj2);
+            } break;
+            case PROP | (LIL_TANK << 16): {
+                rv = collide_pushObject(pObj2, pObj1);
+            } break;
             case FLOOR | (PROP << 16): {
-                double vx, vy;
-
-                rv = gfmObject_collide(pObj1, pObj2);
-                ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
-
-                rv = gfmObject_getVelocity(&vx, &vy, pObj2);
-                ASSERT(rv == GFMRV_OK, rv);
-
-                rv = gfmObject_setVelocity(pObj2, vx * 0.75, -abs(vy) * 0.25 -
-                        0.1);
+                rv = collide_bounceOff(pObj2, pObj1);
             } break;
             case PROP | (FLOOR << 16): {
-                double vx, vy;
-
-                rv = gfmObject_collide(pObj1, pObj2);
-                ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
-
-                rv = gfmObject_getVelocity(&vx, &vy, pObj1);
-                ASSERT(rv == GFMRV_OK, rv);
-
-                rv = gfmObject_setVelocity(pObj1, vx * 0.25, -abs(vy) * 0.25 -
-                        0.1);
+                rv = collide_bounceOff(pObj1, pObj2);
             } break;
             case PROP | (PROP << 16): {
-                double vx1, vx2, vy1, vy2;
-
-                rv = gfmObject_collide(pObj1, pObj2);
-                ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
-
-                rv = gfmObject_getVelocity(&vx1, &vy1, pObj1);
-                ASSERT(rv == GFMRV_OK, rv);
-                rv = gfmObject_getVelocity(&vx2, &vy2, pObj2);
-                ASSERT(rv == GFMRV_OK, rv);
-
-                rv = gfmObject_setVelocity(pObj1, vx1 * 0.5, -abs(vy2) * 0.25 -
-                        0.1);
-                ASSERT(rv == GFMRV_OK, rv);
-                rv = gfmObject_setVelocity(pObj2, vx2 * 0.5, -abs(vy1) * 0.25 -
-                        0.1);
+                rv = collide_elastic(pObj1, pObj2);
             } break;
             default: {
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))
