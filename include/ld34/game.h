@@ -73,6 +73,10 @@ struct stGameAssets {
     gfmSpriteset *pSset16x16;
     /** 32x16 spriteset */
     gfmSpriteset *pSset32x16;
+
+    int audBass1;
+    int audBass2;
+    int audMelody;
 };
 typedef struct stGameAssets gameAssets;
 

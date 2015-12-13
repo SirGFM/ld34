@@ -320,11 +320,9 @@ int main(int argc, char *argv[]) {
     rv = gfm_setBackground(pGame->pCtx, BGCOLOR);
     ASSERT(rv == GFMRV_OK, rv);
 
-    /* TODO Enable audio */
-#if 0
+    /* Enable audio */
     rv = gfm_initAudio(pGame->pCtx, gfmAudio_defQuality);
     ASSERT(rv == GFMRV_OK, rv);
-#endif /* 0 */
 
     rv = gfm_loadTextureStatic(&(pAssets->texHandle), pGame->pCtx, TEXATLAS,
             COLORKEY);
@@ -336,7 +334,15 @@ int main(int argc, char *argv[]) {
     rv = gfm_createSpritesetCached(&(pAssets->pSset32x16), pGame->pCtx,
             pAssets->texHandle, 32, 16);
     ASSERT(rv == GFMRV_OK, rv);
-    /* TODO Load audio assets */
+    /* Load audio assets */
+#if 0
+    rv = gfm_loadAudio(&(pAssets->audBass1), pGame->pCtx, "bass_1.mml", 10);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_loadAudio(&(pAssets->audBass2), pGame->pCtx, "bass_2.mml", 10);
+    ASSERT(rv == GFMRV_OK, rv);
+#endif
+    rv = gfm_loadAudio(&(pAssets->audMelody), pGame->pCtx, "melody.mml", 10);
+    ASSERT(rv == GFMRV_OK, rv);
 
     /* Initialize all buttons */
     rv = gfm_addVirtualKey(&(pButtons->left_leg.handle), pGame->pCtx);
@@ -445,11 +451,6 @@ int main(int argc, char *argv[]) {
             1/*port*/);
     ASSERT(rv == GFMRV_OK, rv);
 
-    rv = gfm_setFPS(pGame->pCtx, config.fps);
-    ASSERT(rv == GFMRV_OK, rv);
-    rv = gfm_setStateFrameRate(pGame->pCtx, config.ups, config.dps);
-    ASSERT(rv == GFMRV_OK, rv);
-
     /* Create all particles groups */
     rv = gfmGroup_getNew(&(pGame->pParticles));
     ASSERT(rv == GFMRV_OK, rv);
@@ -542,11 +543,26 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv);
 #endif /* DEBUG */
 
+    rv = gfmQuadtree_getNew(&(pGame->pQt));
+    ASSERT(rv == GFMRV_OK, rv);
+
+    /* Play the audio */
+#if 0
+    rv = gfm_playAudio(0, pGame->pCtx, pAssets->audBass1, 1.0);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_playAudio(0, pGame->pCtx, pAssets->audBass2, 1.0);
+    ASSERT(rv == GFMRV_OK, rv);
+#endif
+    rv = gfm_playAudio(0, pGame->pCtx, pAssets->audMelody, 1.0);
+    ASSERT(rv == GFMRV_OK, rv);
+
     /* TODO Set the main state as the intro */
     pGame->nextState = state_game;
     pGame->run = 1;
 
-    rv = gfmQuadtree_getNew(&(pGame->pQt));
+    rv = gfm_setFPS(pGame->pCtx, config.fps);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_setStateFrameRate(pGame->pCtx, config.ups, config.dps);
     ASSERT(rv == GFMRV_OK, rv);
 
     rv = main_loop();
