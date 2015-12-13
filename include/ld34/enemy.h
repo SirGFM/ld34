@@ -67,5 +67,13 @@ gfmRV enemy_draw(enemy *pEnemy);
  */
 gfmRV enemy_collideFloor(enemy *pEnemy, gfmObject *pFloor);
 
+/**
+ * Check if actually got hurt by player
+ *
+ * @param  [ in]pEnemy The enemy
+ * @param  [ in]vy     Player's velocity
+ */
+gfmRV enemy_getHurt(enemy *pEnemy, double vy);
+
 #endif /* __ENEMY_H__ */
 

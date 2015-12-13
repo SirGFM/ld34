@@ -88,9 +88,11 @@ typedef struct stButton button;
 
 struct stGameButtons {
     button left_leg;
+    button left_legBack;
     button left_start;
     button right_start;
     button right_leg;
+    button right_legBack;
     button fullscreen;
     button quit;
     button drawQt;
@@ -144,6 +146,7 @@ extern void *pState;
 
 #define LIL_TANK_VX -40.0
 #define LIL_TIME_TO_SHOOT 5000
+#define LIL_TANK_TIME_TO_STRIKE_BACK 1000
 #define LIL_TANK_BETWEEN_SHOOT 300
 #define LIL_TANK_NUM_SHOOTS 5
 

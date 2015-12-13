@@ -22,6 +22,32 @@
 #  include <signal.h>
 #endif
 
+static inline gfmRV collide_handlePlEnemy(player *pPl, gfmObject *pPlObj,
+        enemy *pEne, gfmObject *pEneObj) {
+    gfmRV rv;
+
+    rv = gfmObject_isOverlaping(pPlObj, pEneObj);
+    if (rv == GFMRV_TRUE) {
+        double vy;
+
+        rv = gfmObject_getVerticalVelocity(&vy, pPlObj);
+        ASSERT(rv == GFMRV_OK, rv);
+        rv = enemy_getHurt(pEne, vy);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        rv = gfmObject_setFixed(pEneObj);
+        ASSERT(rv == GFMRV_OK, rv);
+        gfmObject_separateVertical(pEneObj, pPlObj);
+        rv = gfmObject_setMovable(pEneObj);
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+
+    rv = GFMRV_OK;
+__ret:
+    return rv;
+}
+
+
 static inline gfmRV collide_spawnExplosion(gfmGroupNode *pCtx, gfmObject *pObj) {
     gfmRV rv;
     gfmSprite *pSpr;
@@ -277,11 +303,15 @@ gfmRV collide_run() {
             case PL_RIGHT_LEG | (TURRET << 16):
             case PL_LEFT_LEG | (LIL_TANK << 16):
             case PL_RIGHT_LEG | (LIL_TANK << 16): {
+                rv = collide_handlePlEnemy((player*)pChild1, pObj1,
+                        (enemy*)pChild2, pObj2);
             } break;
             case TURRET | (PL_LEFT_LEG << 16):
             case TURRET | (PL_RIGHT_LEG << 16):
             case LIL_TANK | (PL_LEFT_LEG << 16):
             case LIL_TANK | (PL_RIGHT_LEG << 16): {
+                rv = collide_handlePlEnemy((player*)pChild2, pObj2,
+                        (enemy*)pChild1, pObj1);
             } break;
             /* Collide enemy with floor */
             case TURRET | (FLOOR << 16):

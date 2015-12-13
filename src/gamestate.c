@@ -256,6 +256,9 @@ gfmRV gamestate_draw() {
     rv = gfmTilemap_draw(pGamestate->pTm, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
 
+    rv = player_draw(pGamestate->pPlayer);
+    ASSERT(rv == GFMRV_OK, rv);
+
     i = 0;
     while (i < gfmGenArr_getUsed(pGamestate->pEnes)) {
         enemy *pEnemy;
@@ -267,9 +270,6 @@ gfmRV gamestate_draw() {
 
         i++;
     }
-
-    rv = player_draw(pGamestate->pPlayer);
-    ASSERT(rv == GFMRV_OK, rv);
 
     rv = gfmGroup_draw(pGame->pParticles, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);

@@ -41,8 +41,16 @@ static int grp_anim_dataLen = sizeof(grp_anim_data) / sizeof(int);
 static gfmRV main_updateButtons() {
     gfmRV rv;
 
+    rv = gfm_getKeyState(&(pButtons->left_legBack.state),
+            &(pButtons->left_legBack.num), pGame->pCtx,
+            pButtons->left_legBack.handle);
+    ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_getKeyState(&(pButtons->left_leg.state), &(pButtons->left_leg.num),
             pGame->pCtx, pButtons->left_leg.handle);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->right_legBack.state),
+            &(pButtons->right_legBack.num), pGame->pCtx,
+            pButtons->right_legBack.handle);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_getKeyState(&(pButtons->right_leg.state),
             &(pButtons->right_leg.num), pGame->pCtx,
@@ -311,9 +319,13 @@ int main(int argc, char *argv[]) {
     /* Initialize all buttons */
     rv = gfm_addVirtualKey(&(pButtons->left_leg.handle), pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->left_legBack.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_addVirtualKey(&(pButtons->left_start.handle), pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_addVirtualKey(&(pButtons->right_leg.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->right_legBack.handle), pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_addVirtualKey(&(pButtons->right_start.handle), pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
@@ -340,6 +352,14 @@ int main(int argc, char *argv[]) {
     rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->left_leg.handle,
             gfmController_l1, 1/*port*/);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindInput(pGame->pCtx, pButtons->left_legBack.handle, gfmKey_d);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->left_legBack.handle,
+            gfmController_l2, 0/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->left_legBack.handle,
+            gfmController_l2, 1/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
 
     rv = gfm_bindInput(pGame->pCtx, pButtons->right_leg.handle, gfmKey_j);
     ASSERT(rv == GFMRV_OK, rv);
@@ -349,6 +369,13 @@ int main(int argc, char *argv[]) {
     rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->right_leg.handle,
             gfmController_r1, 1/*port*/);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindInput(pGame->pCtx, pButtons->right_legBack.handle, gfmKey_k);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->right_legBack.handle,
+            gfmController_r2, 0/*port*/);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->right_legBack.handle,
+            gfmController_r2, 1/*port*/);
 
     rv = gfm_bindInput(pGame->pCtx, pButtons->left_start.handle, gfmKey_g);
     ASSERT(rv == GFMRV_OK, rv);

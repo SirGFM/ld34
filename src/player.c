@@ -106,7 +106,7 @@ void player_clean(player **ppPlayer) {
 }
 
 static inline gfmRV player_moveLeg(gfmObject *pObj, button *pBt, int *pTime,
-        int didJump) {
+        int didJump, double vx) {
     gfmRV rv;
 
     if ((pBt->state & gfmInput_justPressed) == gfmInput_justPressed) {
@@ -120,7 +120,7 @@ static inline gfmRV player_moveLeg(gfmObject *pObj, button *pBt, int *pTime,
         ASSERT(rv == GFMRV_OK, rv);
 
         if (dir & gfmCollision_down) {
-            rv = gfmObject_setVelocity(pObj, PL_VX, PL_VY);
+            rv = gfmObject_setVelocity(pObj, vx, PL_VY);
             ASSERT(rv == GFMRV_OK, rv);
         }
         else {
@@ -131,15 +131,15 @@ static inline gfmRV player_moveLeg(gfmObject *pObj, button *pBt, int *pTime,
     }
     else if ((pBt->state & gfmInput_pressed) == gfmInput_pressed && *pTime < PL_HOLD_T) {
         int elapsed;
-        double vx, vy;
+        double _vx, _vy;
 
         rv = gfm_getElapsedTime(&elapsed, pGame->pCtx);
         ASSERT(rv == GFMRV_OK, rv);
 
-        vx = PL_VX + PL_VX * 0.1 * (PL_HOLD_T - *pTime) / (double)PL_HOLD_T;
-        vy = PL_VY  * 0.8 * (PL_HOLD_T - *pTime) / (double)PL_HOLD_T;
+        _vx = vx + vx * 0.1 * (PL_HOLD_T - *pTime) / (double)PL_HOLD_T;
+        _vy = PL_VY  * 0.8 * (PL_HOLD_T - *pTime) / (double)PL_HOLD_T;
 
-        rv = gfmObject_setVelocity(pObj, vx, vy);
+        rv = gfmObject_setVelocity(pObj, _vx, _vy);
         ASSERT(rv == GFMRV_OK, rv);
 
         *pTime += elapsed;
@@ -176,15 +176,45 @@ __ret:
  * @param  [ in]pPlayer The player
  */
 gfmRV player_preUpdate(player *pPlayer) {
+#if 0
+    double vx;
+#endif
     gfmRV rv;
     int l_x, r_x;
 
     rv = player_moveLeg(pPlayer->left_pLeg, &(pButtons->left_leg),
-            &(pPlayer->left_raisingTime), pPlayer->didJump);
+            &(pPlayer->left_raisingTime), pPlayer->didJump, PL_VX);
     ASSERT(rv == GFMRV_OK, rv);
     rv = player_moveLeg(pPlayer->right_pLeg, &(pButtons->right_leg),
-            &(pPlayer->right_raisingTime), pPlayer->didJump);
+            &(pPlayer->right_raisingTime), pPlayer->didJump, PL_VX);
     ASSERT(rv == GFMRV_OK, rv);
+#if 0
+    rv = gfmObject_getHorizontalVelocity(&vx, pPlayer->left_pLeg);
+    ASSERT(rv == GFMRV_OK, rv);
+    if (vx == 0 || vx > 0) {
+        rv = player_moveLeg(pPlayer->left_pLeg, &(pButtons->left_leg),
+                &(pPlayer->left_raisingTime), pPlayer->didJump, PL_VX);
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+    if (vx == 0 || vx < 0) {
+        rv = player_moveLeg(pPlayer->left_pLeg, &(pButtons->left_legBack),
+                &(pPlayer->left_raisingTime), pPlayer->didJump, -PL_VX);
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+
+    rv = gfmObject_getHorizontalVelocity(&vx, pPlayer->right_pLeg);
+    ASSERT(rv == GFMRV_OK, rv);
+    if (vx == 0 || vx > 0) {
+        rv = player_moveLeg(pPlayer->right_pLeg, &(pButtons->right_leg),
+                &(pPlayer->right_raisingTime), pPlayer->didJump, PL_VX);
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+    if (vx == 0 || vx < 0) {
+        rv = player_moveLeg(pPlayer->right_pLeg, &(pButtons->right_legBack),
+                &(pPlayer->right_raisingTime), pPlayer->didJump, -PL_VX);
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+#endif
 
     /* Check that the maximum distance wasn't reached */
     rv = gfmObject_getHorizontalPosition(&l_x, pPlayer->left_pLeg);
