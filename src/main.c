@@ -74,6 +74,9 @@ static gfmRV main_updateButtons() {
     rv = gfm_getKeyState(&(pButtons->drawQt.state), &(pButtons->drawQt.num),
             pGame->pCtx, pButtons->drawQt.handle);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->reset.state), &(pButtons->reset.num),
+            pGame->pCtx, pButtons->reset.handle);
+    ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_getKeyState(&(pButtons->gif.state), &(pButtons->gif.num),
             pGame->pCtx, pButtons->gif.handle);
     ASSERT(rv == GFMRV_OK, rv);
@@ -96,6 +99,13 @@ static gfmRV main_updateButtons() {
     if ((pButtons->drawQt.state & gfmInput_justReleased) ==
             gfmInput_justReleased) {
         pGame->drawQt = !pGame->drawQt;
+    }
+
+    if ((pButtons->reset.state & gfmInput_justReleased) ==
+            gfmInput_justReleased) {
+        if (pGame->curState == state_game) {
+            pGame->nextState = state_game;
+        }
     }
 
     if ((pButtons->gif.state & gfmInput_justReleased) ==
@@ -255,12 +265,14 @@ __ret:
 int main(int argc, char *argv[]) {
     configCtx config;
     gfmRV rv;
+    gfmSave *pSave;
 
     /* Clean the game, so it's properly release on error */
     pGame = 0;
     pAssets = 0;
     pButtons = 0;
     pState = 0;
+    pSave = 0;
 
     /* Set all default values */
     config.dps = 60;
@@ -290,6 +302,16 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv);
 
     /* TODO Load config file */
+
+    /* Erase the save file */
+    rv = gfmSave_getNew(&pSave);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmSave_bindStatic(pSave, pGame->pCtx, SAVE_FILE);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmSave_erase(pSave);
+    ASSERT(rv == GFMRV_OK, rv);
+    gfmSave_free(&pSave);
+    pSave = 0;
 
     rv = gfm_initGameWindow(pGame->pCtx, BBWDT, BBHGT, WNWDT, WNHGT, CAN_RESIZE,
             config.vsync);
@@ -334,6 +356,8 @@ int main(int argc, char *argv[]) {
     rv = gfm_addVirtualKey(&(pButtons->quit.handle), pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_addVirtualKey(&(pButtons->drawQt.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->reset.handle), pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_addVirtualKey(&(pButtons->gif.handle), pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
@@ -394,6 +418,10 @@ int main(int argc, char *argv[]) {
     rv = gfm_bindGamepadInput(pGame->pCtx, pButtons->right_start.handle,
             gfmController_start, 1/*port*/);
     ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfm_bindInput(pGame->pCtx, pButtons->reset.handle, gfmKey_r);
+    ASSERT(rv == GFMRV_OK, rv);
+    /* TODO Bind to gamepad button */
 
     rv = gfm_bindInput(pGame->pCtx, pButtons->fullscreen.handle, gfmKey_f12);
     ASSERT(rv == GFMRV_OK, rv);
@@ -526,6 +554,7 @@ int main(int argc, char *argv[]) {
 
     rv = GFMRV_OK;
 __ret:
+    gfmSave_free(&pSave);
     if (pGame) {
         /* TODO Free everything else */
         gfmQuadtree_free(&(pGame->pQt));

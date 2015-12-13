@@ -8,6 +8,7 @@
 #include <GFraMe/gfmError.h>
 #include <GFraMe/gfmInput.h>
 #include <GFraMe/gfmObject.h>
+#include <GFraMe/gfmSave.h>
 #include <GFraMe/gfmSprite.h>
 
 #include <ld34/collide.h>
@@ -39,7 +40,31 @@ struct stPlayer {
  */
 gfmRV player_init(player **ppPlayer, int x, int y) {
     gfmRV rv;
+    gfmSave *pSave;
     player *pPlayer;
+    int _x, _y;
+
+    pSave = 0;
+
+    rv = gfmSave_getNew(&pSave);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmSave_bindStatic(pSave, pGame->pCtx, SAVE_FILE);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmSave_readStatic(&_x, pSave, "checkpoint_x");
+    if (rv != GFMRV_OK) {
+        _x = -1;
+    }
+    rv = gfmSave_readStatic(&_y, pSave, "checkpoint_y");
+    if (rv != GFMRV_OK) {
+        _y = -1;
+    }
+    gfmSave_free(&pSave);
+    pSave = 0;
+
+    if (_x != -1 && _y != -1) {
+        x = _x;
+        y = _y;
+    }
 
     pPlayer = (player*)malloc(sizeof(player));
     ASSERT(pPlayer, GFMRV_ALLOC_FAILED);
@@ -82,6 +107,8 @@ gfmRV player_init(player **ppPlayer, int x, int y) {
     *ppPlayer = pPlayer;
     rv = GFMRV_OK;
 __ret:
+    gfmSave_free(&pSave);
+
     return rv;
 }
 

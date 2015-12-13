@@ -97,6 +97,7 @@ struct stGameButtons {
     button quit;
     button drawQt;
     button gif;
+    button reset;
     button run;
     button next;
     button pause;

@@ -311,6 +311,12 @@ gfmRV collide_run() {
             case CHECKPOINT | (PL_LEFT_LEG << 16):
             case CHECKPOINT | (PL_RIGHT_LEG << 16):
             case CHECKPOINT | (PL_LOWER << 16):
+
+            case PL_LEFT_LEG | (PROP << 16):
+            case PL_RIGHT_LEG | (PROP << 16):
+            case PROP | (PL_LEFT_LEG << 16):
+            case PROP | (PL_RIGHT_LEG << 16):
+
             break;
             /* Collide against floor */
             case PL_LEFT_LEG | (FLOOR << 16):
@@ -321,6 +327,7 @@ gfmRV collide_run() {
             case FLOOR | (PL_RIGHT_LEG << 16): {
                 rv = player_collideLimbFloor((player*)pChild2, type2, pObj1);
             } break;
+#if 0
             /* Walk over pellets */
             case PL_LEFT_LEG | (PROP << 16):
             case PL_RIGHT_LEG | (PROP << 16): {
@@ -338,6 +345,7 @@ gfmRV collide_run() {
                 ASSERT(rv == GFMRV_OK, rv);
                 rv = gfmObject_setMovable(pObj1);
             } break;
+#endif
             /* Hurt player */
             case PL_UPPER | (BULLET << 16):
             case PL_LOWER | (BULLET << 16):
