@@ -61,17 +61,14 @@ gfmRV gamestate_init() {
     rv = textManager_init(&(pGame->pTextManager), 0, 0, BBWDT / 8, 5, 1);
     ASSERT(rv == GFMRV_OK, rv);
 
-    /* TODO Initialize everything */
-    rv = player_init(&(pGamestate->pPlayer), 64, 64);
-    ASSERT(rv == GFMRV_OK, rv);
-
+    /* Initialize everything */
     /* Load the map */
     rv = gfmTilemap_getNew(&(pGamestate->pTm));
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmTilemap_init(pGamestate->pTm, pAssets->pSset8x8, 100/*widthInTiles*/,
             40/*heightInTiles*/, -1/*defTile*/);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmTilemap_loadf(pGamestate->pTm, pGame->pCtx, "map_tile.gfm", 12, (char**)pTmDict,
+    rv = gfmTilemap_loadf(pGamestate->pTm, pGame->pCtx, "game_tile.gfm", 13, (char**)pTmDict,
             (int*)tmDictType, tmDictLen);
     ASSERT(rv == GFMRV_OK, rv);
 
@@ -83,7 +80,7 @@ gfmRV gamestate_init() {
     rv = gfmParser_getNew(&pParser);
     ASSERT(rv == GFMRV_OK, rv);
 
-    rv = gfmParser_initStatic(pParser, pGame->pCtx, "map_obj.gfm");
+    rv = gfmParser_initStatic(pParser, pGame->pCtx, "game_obj.gfm");
     ASSERT(rv == GFMRV_OK, rv);
 
     while (1) {
@@ -127,6 +124,17 @@ gfmRV gamestate_init() {
                 gfmGenArr_push(pGamestate->pEnes);
 
                 rv = enemy_init(pEnemy, pParser, TURRET);
+                ASSERT(rv == GFMRV_OK, rv);
+            }
+            else if (strcmp("player", pType) == 0) {
+                int x, y;
+
+                rv = gfmParser_getPos(&x, &y, pParser);
+                ASSERT(rv == GFMRV_OK, rv);
+                x += 16;
+                y -= 32;
+
+                rv = player_init(&(pGamestate->pPlayer), x, y);
                 ASSERT(rv == GFMRV_OK, rv);
             }
             else if (strcmp("text", pType) == 0) {

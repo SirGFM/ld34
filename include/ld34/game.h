@@ -134,7 +134,7 @@ extern void *pState;
 #define GRAV 100
 #define PARTICLE_TTL 10000
 #define NUM_PARTICLES 2048
-#define TEXT_DELAY 82
+#define TEXT_DELAY 60
 
 #define PL_VX 30.0
 #define PL_VY -52.5
