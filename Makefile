@@ -10,6 +10,7 @@
 #==============================================================================
   OBJS =                        \
           $(OBJDIR)/collide.o   \
+          $(OBJDIR)/enemy.o     \
           $(OBJDIR)/gamestate.o \
           $(OBJDIR)/main.o      \
           $(OBJDIR)/player.o

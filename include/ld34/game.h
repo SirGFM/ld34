@@ -109,6 +109,8 @@ extern void *pState;
 #define TEXATLAS "atlas.bmp"
 #define COLORKEY 0xff00ff
 
+#define GRAV 100
+
 #define PL_VX 30.0
 #define PL_VY -52.5
 #define PL_JUMP_VX 25.0
@@ -117,11 +119,16 @@ extern void *pState;
 #define PL_JUMP_T 125
 #define PL_MAX_DIST 22
 
+#define LIL_TANK_VX -40.0
+
 #define PL_UPPER     gfmType_reserved_2
 #define PL_LOWER     gfmType_reserved_3
 #define PL_LEFT_LEG  gfmType_reserved_4
 #define PL_RIGHT_LEG gfmType_reserved_5
 #define FLOOR        gfmType_reserved_6
+#define LIL_TANK     gfmType_reserved_7
+#define BULLET       gfmType_reserved_8
+#define PROP         gfmType_reserved_9
 
 #endif /* __GAME_H__ */
 

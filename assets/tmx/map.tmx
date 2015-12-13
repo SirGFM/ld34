@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="30" tilewidth="8" tileheight="8" backgroundcolor="#332825" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="30" tilewidth="8" tileheight="8" backgroundcolor="#332825" nextobjectid="2">
  <tileset firstgid="1" name="atlas" tilewidth="8" tileheight="8" tilecount="4096">
   <image source="../atlas.bmp" trans="ff00ff" width="512" height="512"/>
   <terraintypes>
@@ -26,7 +26,10 @@
   <tile id="213" terrain="0,0,0,0"/>
   <tile id="275" terrain="0,0,0,0"/>
  </tileset>
- <layer name="Tile Layer 1" width="80" height="30">
+ <tileset firstgid="4097" name="atlas-16" tilewidth="16" tileheight="16" tilecount="1024">
+  <image source="../atlas.bmp" trans="ff00ff" width="512" height="512"/>
+ </tileset>
+ <layer name="tile" width="80" height="30">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -60,4 +63,7 @@
 145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145
 </data>
  </layer>
+ <objectgroup name="obj">
+  <object id="1" name="lil_tank" type="lil_tank" gid="4161" x="280" y="200" width="16" height="16"/>
+ </objectgroup>
 </map>

@@ -10,6 +10,7 @@
 #include <GFraMe/gfmSpriteset.h>
 
 #include <ld34/collide.h>
+#include <ld34/enemy.h>
 #include <ld34/game.h>
 #include <ld34/player.h>
 
@@ -89,6 +90,12 @@ gfmRV collide_run() {
             case FLOOR | (PL_LEFT_LEG << 16):
             case FLOOR | (PL_RIGHT_LEG << 16): {
                 rv = player_collideLimbFloor((player*)pChild2, type2, pObj1);
+            } break;
+            case LIL_TANK | (FLOOR << 16): {
+                rv = enemy_collideFloor((enemy*)pChild1, pObj2);
+            } break;
+            case FLOOR | (LIL_TANK << 16): {
+                rv = enemy_collideFloor((enemy*)pChild2, pObj1);
             } break;
             default: {
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))

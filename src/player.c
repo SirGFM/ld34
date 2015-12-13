@@ -72,9 +72,9 @@ gfmRV player_init(player **ppPlayer, int x, int y) {
             0, 0, PL_UPPER);
     ASSERT(rv == GFMRV_OK, rv);
 
-    rv = gfmObject_setAcceleration(pPlayer->left_pLeg, 0, 100);
+    rv = gfmObject_setAcceleration(pPlayer->left_pLeg, 0, GRAV);
     ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_setAcceleration(pPlayer->right_pLeg, 0, 100);
+    rv = gfmObject_setAcceleration(pPlayer->right_pLeg, 0, GRAV);
     ASSERT(rv == GFMRV_OK, rv);
 
     pPlayer->didJump = 1;
