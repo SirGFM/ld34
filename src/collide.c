@@ -54,6 +54,9 @@ static inline gfmRV collide_checkpoint(gfmObject *pPl, gfmObject *pCheckpoint) {
     rv = textManager_pushTextStatic(pGame->pTextManager, "               CHECKPOINT", 2000);
     ASSERT(rv == GFMRV_OK, rv);
 
+    rv = gfm_playAudio(0, pGame->pCtx, pAssets->sfxCheckpoint, 0.4);
+    ASSERT(rv == GFMRV_OK, rv);
+
     rv = GFMRV_OK;
 __ret:
     gfmSave_free(&pSave);
@@ -102,6 +105,9 @@ static inline gfmRV collide_spawnExplosion(gfmGroupNode *pCtx, gfmObject *pObj) 
     rv = gfmGroup_setPosition(pGame->pParticles, x, y);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmGroup_setAnimation(pGame->pParticles, P_EXPLOSION);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfm_playAudio(0, pGame->pCtx, pAssets->sfxPlHurt, 0.4);
     ASSERT(rv == GFMRV_OK, rv);
 
     rv = GFMRV_OK;
