@@ -354,6 +354,7 @@ int main(int argc, char *argv[]) {
     LOAD_SFX(EnemyExplosion, "ene_explosion.wav");
     LOAD_SFX(PlHurt, "pl_hurt.wav");
     LOAD_SFX(Checkpoint, "checkpoint.wav");
+    LOAD_SFX(EnemyShoot, "ene_shoot.wav");
 
     /* Initialize all buttons */
     rv = gfm_addVirtualKey(&(pButtons->left_leg.handle), pGame->pCtx);

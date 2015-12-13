@@ -236,6 +236,20 @@ gfmRV enemy_preUpdate(enemy *pEnemy) {
 
                     x += 4;
 
+                    do {
+                        gfmCamera *pCam;
+
+                        pCam = 0;
+                        rv = gfm_getCamera(&pCam, pGame->pCtx);
+                        ASSERT(rv == GFMRV_OK, rv);
+                        rv = gfmCamera_isSpriteInside(pCam, pEnemy->pSpr);
+                        if (rv == GFMRV_TRUE) {
+                            rv = gfm_playAudio(0, pGame->pCtx,
+                                    pAssets->sfxEnemyShoot, 0.3);
+                            ASSERT(rv == GFMRV_OK, rv);
+                        }
+                    } while (0);
+
                     /* Spawn a bullet */
                     rv = gfmGroup_recycle(&pSpr, pGame->pBullets);
                     ASSERT(rv == GFMRV_OK, rv);
