@@ -13,6 +13,7 @@
 #include <ld34/enemy.h>
 #include <ld34/game.h>
 #include <ld34/player.h>
+#include <ld34/textManager.h>
 
 #include <stdlib.h>
 
@@ -266,6 +267,17 @@ gfmRV collide_run() {
             } break;
             case PROP | (PROP << 16): {
                 rv = collide_elastic(pObj1, pObj2);
+            } break;
+            /* Queue a text to be displayed */
+            case PL_LEFT_LEG | (TEXT << 16):
+            case PL_RIGHT_LEG | (TEXT << 16): {
+                textManager_pushEvent(pGame->pTextManager, (textEvent*)pChild2);
+                rv = GFMRV_OK;
+            } break;
+            case TEXT | (PL_LEFT_LEG << 16):
+            case TEXT | (PL_RIGHT_LEG << 16): {
+                textManager_pushEvent(pGame->pTextManager, (textEvent*)pChild1);
+                rv = GFMRV_OK;
             } break;
             default: {
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))

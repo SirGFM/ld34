@@ -71,7 +71,7 @@
   <object id="4" type="text" gid="5152" x="384" y="208" width="192" height="24">
    <properties>
     <property name="repeat" value="f"/>
-    <property name="string" value="&quot;'Fraid not! This mecha was built to go over any hurdle.\n\nIf both feet land at the same time, it will trigger a jump. Try it!&quot;"/>
+    <property name="string" value="&quot;'FRAID NOT! THIS MECHA WAS BUILT TO GO OVER ANY HURDLE.\n\nIF BOTH FEET LAND AT THE SAME TIME, IT WILL TRIGGER A JUMP. TRY IT!&quot;"/>
     <property name="ttl" value="5000"/>
    </properties>
   </object>

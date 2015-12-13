@@ -13,6 +13,8 @@
 #include <GFraMe/gfmSpriteset.h>
 #include <GFraMe/gfmTypes.h>
 
+#include <ld34/textManager.h>
+
 enum enState {
     state_none = 0,
     state_intro,
@@ -47,6 +49,9 @@ struct stGameCtx {
      * next time it's run
      */
     state nextState;
+
+    textManager *pTextManager;
+
     /** Whether in fullscreen or windowed mode */
     int isFullscreen;
     int width;
@@ -126,6 +131,7 @@ extern void *pState;
 #define GRAV 100
 #define PARTICLE_TTL 10000
 #define NUM_PARTICLES 2048
+#define TEXT_DELAY 82
 
 #define PL_VX 30.0
 #define PL_VY -52.5

@@ -1,2 +1,2 @@
 obj lil_tank 280 200 16 16
-obj text 384 208 192 24 [ repeat , f ] [ string , "'Fraid not! This mecha was built to go over any hurdle.\n\nIf both feet land at the same time, it will trigger a jump. Try it!" ] [ ttl , 5000 ]
+obj text 384 208 192 24 [ repeat , f ] [ string , "'FRAID NOT! THIS MECHA WAS BUILT TO GO OVER ANY HURDLE.\n\nIF BOTH FEET LAND AT THE SAME TIME, IT WILL TRIGGER A JUMP. TRY IT!" ] [ ttl , 5000 ]

@@ -58,6 +58,9 @@ gfmRV gamestate_init() {
     ASSERT(pGamestate, GFMRV_ALLOC_FAILED);
     memset(pGamestate, 0x0, sizeof(gamestate));
 
+    rv = textManager_init(&(pGame->pTextManager), 0, 0, BBWDT / 8, 5, 1);
+    ASSERT(rv == GFMRV_OK, rv);
+
     /* TODO Initialize everything */
     rv = player_init(&(pGamestate->pPlayer), 64, 64);
     ASSERT(rv == GFMRV_OK, rv);
@@ -118,6 +121,7 @@ gfmRV gamestate_init() {
                 ASSERT(rv == GFMRV_OK, rv);
             }
             else if (strcmp("text", pType) == 0) {
+                rv = textManager_addEvent(pGame->pTextManager, pParser);
             }
             else {
                 /* Got something that still isn't handled */
@@ -206,6 +210,9 @@ gfmRV gamestate_update() {
     rv = player_preUpdate(pGamestate->pPlayer);
     ASSERT(rv == GFMRV_OK, rv);
 
+    rv = textManager_preUpdate(pGame->pTextManager);
+    ASSERT(rv == GFMRV_OK, rv);
+
     /* After everything collided */
     i = 0;
     while (i < gfmGenArr_getUsed(pGamestate->pEnes)) {
@@ -220,6 +227,9 @@ gfmRV gamestate_update() {
     }
 
     rv = player_postUpdate(pGamestate->pPlayer);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = textManager_postUpdate(pGame->pTextManager);
     ASSERT(rv == GFMRV_OK, rv);
 
     rv = GFMRV_OK;
@@ -263,6 +273,9 @@ gfmRV gamestate_draw() {
     rv = player_draw(pGamestate->pPlayer);
     ASSERT(rv == GFMRV_OK, rv);
 
+    rv = textManager_draw(pGame->pTextManager);
+    ASSERT(rv == GFMRV_OK, rv);
+
 #ifdef DEBUG
     if (pGame->drawQt) {
         rv = gfmQuadtree_drawBounds(pGame->pQt, pGame->pCtx, 0);
@@ -289,6 +302,7 @@ void gamestate_clean() {
     gfmTilemap_free(&(pGamestate->pTm));
     player_clean(&(pGamestate->pPlayer));
     gfmGenArr_clean(pGamestate->pEnes, enemy_clean);
+    textManager_clean(&(pGame->pTextManager));
 
     free(pState);
     pState = 0;
