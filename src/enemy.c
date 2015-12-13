@@ -24,7 +24,7 @@ int en_liltank_data[] = {
 int en_turret_data[] = {
               /* len|fps|loop|data... */
 /* IDLE     */    2 , 6 , 1  , 96,97,
-/* DEATH    */   12 , 6 , 1  , 98,99,98,99,98,99,98,99,98,99,98,99
+/* DEATH    */   12 , 6 , 0  , 98,99,98,99,98,99,98,99,98,99,98,99
 };
 
 struct stEnemy {
@@ -33,6 +33,7 @@ struct stEnemy {
     int switchDir;
     int num;
     int type;
+    int isHurt;
 };
 
 /**
@@ -163,6 +164,56 @@ __ret:
 gfmRV enemy_preUpdate(enemy *pEnemy) {
     gfmRV rv;
     int elapsed;
+
+    if (pEnemy->isHurt == 3) {
+        return GFMRV_OK;
+    }
+    else if (pEnemy->isHurt == 2) {
+        int i;
+
+        rv = gfmSprite_update(pEnemy->pSpr, pGame->pCtx);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        rv = gfmSprite_didAnimationFinish(pEnemy->pSpr);
+        if (rv == GFMRV_TRUE || rv == GFMRV_NO_ANIMATION_PLAYING) {
+            i = 0;
+            while (i < 8) {
+                gfmSprite *pSpr;
+                int vx, vy, x, y;
+
+                if (i % 4 == 0) {
+                    vx = 0;
+                    vy = 50 * (1 - 2 * (i == 0));
+                }
+                else if (i % 4 == 2) {
+                    vx = 50 * (1 - 2 * (i == 0));
+                    vy = 0;
+                }
+                else {
+                    vx = 50 * 0.707106781 * (1 - 2 * (i > 4));
+                    vy = 50 * 0.707106781 * (1 - 2 * (((i + 1) % 8) > 4));
+                }
+
+                rv = gfmSprite_getPosition(&x, &y, pEnemy->pSpr);
+                ASSERT(rv == GFMRV_OK, rv);
+
+                rv = gfmGroup_recycle(&pSpr, pGame->pParticles);
+                ASSERT(rv == GFMRV_OK, rv);
+                rv = gfmGroup_setPosition(pGame->pParticles, x, y);
+                ASSERT(rv == GFMRV_OK, rv);
+                rv = gfmGroup_setVelocity(pGame->pParticles, vx, vy);
+                ASSERT(rv == GFMRV_OK, rv);
+                rv = gfmGroup_setAnimation(pGame->pParticles, P_EXPLOSION);
+                ASSERT(rv == GFMRV_OK, rv);
+
+                i++;
+            }
+
+            pEnemy->isHurt = 3;
+        }
+
+        return GFMRV_OK;
+    }
 
     rv = gfm_getElapsedTime(&elapsed, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
@@ -310,7 +361,7 @@ __ret:
 gfmRV enemy_postUpdate(enemy *pEnemy) {
     gfmRV rv;
 
-    if (pEnemy->switchDir) {
+    if (!pEnemy->isHurt && pEnemy->switchDir) {
         double vx;
         int flipped;
 
@@ -326,6 +377,25 @@ gfmRV enemy_postUpdate(enemy *pEnemy) {
 
         pEnemy->switchDir = 0;
     }
+    else if (pEnemy->isHurt == 1) {
+        rv = gfmSprite_setVelocity(pEnemy->pSpr, 0, 0);
+        ASSERT(rv == GFMRV_OK, rv);
+        rv = gfmSprite_setAcceleration(pEnemy->pSpr, 0, 0);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        switch (pEnemy->type) {
+            case LIL_TANK: {
+                rv = gfmSprite_playAnimation(pEnemy->pSpr, 2);
+            } break;
+            case TURRET: {
+                rv = gfmSprite_playAnimation(pEnemy->pSpr, 1);
+            } break;
+            default: { rv = GFMRV_OK; }
+        }
+        ASSERT(rv == GFMRV_OK, rv);
+
+        pEnemy->isHurt = 2;
+    }
 
     rv = GFMRV_OK;
 __ret:
@@ -340,8 +410,10 @@ __ret:
 gfmRV enemy_draw(enemy *pEnemy) {
     gfmRV rv;
 
-    rv = gfmSprite_draw(pEnemy->pSpr, pGame->pCtx);
-    ASSERT(rv == GFMRV_OK, rv);
+    if (pEnemy->isHurt < 3) {
+        rv = gfmSprite_draw(pEnemy->pSpr, pGame->pCtx);
+        ASSERT(rv == GFMRV_OK, rv);
+    }
 
     rv = GFMRV_OK;
 __ret:
