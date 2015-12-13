@@ -1,0 +1,75 @@
+MML//=======================================//
+// Song written for '???'                   //
+//     a game by GFM                        //
+//     made for Ludum Dare #34              //
+//==========================================//
+
+t160
+
+//============================================
+// Bass-line-1:
+//   25% square wave
+//   play notes for 60% of its duration
+//--------------------------------------------
+
+w2 o3 l4 k5 q60 h65 v(35, 20) >
+
+a1
+< c1 >
+f1
+g1
+
+a2 a4. a8
+< c2 c4. c8>
+f2 f4. f8
+g2 g4. g8
+
+r4 g2 g4
+r4 [ g4 ]3
+
+$
+
+l4
+[[ a ]4
+ [ < c > ]4
+ [ f ]4
+ [ g ]4]3
+
+// Go to a higher pitch (and tone)
+l1
+[a <
+ c
+ f
+ g >]
+
+a+ <
+c+
+f+
+g+ >
+
+b <
+d
+g
+a >
+
+// First part in a higher tone
+
+l4
+[[ b ]4
+ [ < d > ]4
+ [ g ]4
+ [ a ]4]3
+
+// Go back to the original pitch
+
+l1
+a+ <
+c+
+f+
+g+ >
+
+a <
+c
+f
+g >
+

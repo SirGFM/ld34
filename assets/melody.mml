@@ -1,0 +1,95 @@
+MML//=======================================//
+// Song written for '???'                   //
+//     a game by GFM                        //
+//     made for Ludum Dare #34              //
+//==========================================//
+
+t160
+
+//============================================
+// Melody-line-1:
+//   50% square wave,
+//   play notes for 75% of its duration
+//--------------------------------------------
+
+w0 k3 q70 h80 o5 l8 v(40, 10)
+
+[r4 e2.
+ r4 g2.
+ r4 > a2. <
+ r4 > b2. <]
+
+r4 > b2 b4 <
+r4 > [ b4 ]3 <
+
+$
+
+[ e c > a < ] e a
+[ g e c ] g c
+[ c > a f < ] c > f <
+[ d > b g < ] d > g <
+
+[ e ]5 c > a < e
+[ g ]3 [ e ]3 d e
+[ c4. ]2 c > g <
+d1
+
+l2
+e c
+g e
+> a f
+  b g <
+
+// Go to a higher pitch (and tone)
+l8
+[ e c > a < ] e < a
+< c1 >
+< d1 >
+< c2 > a r4. >
+
+e4. > g4. < c4
+g2 d2
+a1
+< c4. > b4. a4
+
+[ f c+ > a+ < ] f < a+
+< c+1 >
+< d+1 >
+< c+2 > a+ r4. >
+
+f+4. > a4. < d4
+a2 e2
+b1
+< d4. c+4. > b4
+
+// First part in a higher tone
+
+[ f+ ]5 d > b < f+
+[ a ]3 [ f+ ]3 e f+
+[ d4. ]2 d > a <
+e1
+
+[ f+ d > b < ] f+ b
+[ a f+ d ] a d
+[ d > b g < ] d > g <
+[ e > > c+ < a < ] e > a <
+
+l2
+f+ d
+a f+
+> b g
+  > c+ < a <
+
+// Go back to the original pitch
+
+l8
+[ f c+ > a+ < ] f < a+
+< c+1 >
+< d+1 >
+< c+2 > a+ r4. >
+
+e4. > g4. < c4
+g2 d2
+a1
+< c4. > b4. a4
+
