@@ -153,6 +153,7 @@ __ret:
 gfmRV gamestate_update() {
     gamestate *pGamestate;
     gfmRV rv;
+    int i;
 
     pGamestate = (gamestate*)pState;
 
@@ -160,16 +161,53 @@ gfmRV gamestate_update() {
             6 /* maxDepth */, 10 /* maxNodes */);
     ASSERT(rv == GFMRV_OK, rv);
 
-    /* TODO Update the game */
     rv = gfmTilemap_update(pGamestate->pTm, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfmQuadtree_populateTilemap(pGame->pQt, pGamestate->pTm);
     ASSERT(rv == GFMRV_OK, rv);
 
+    /* Update the game */
+    i = 0;
+    while (i < gfmGenArr_getUsed(pGamestate->pEnes)) {
+        enemy *pEnemy;
+
+        pEnemy = gfmGenArr_getObject(pGamestate->pEnes, i);
+
+        rv = enemy_preUpdate(pEnemy);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        i++;
+    }
+
+#if 0
+    rv = gfmGroup_update(pGame->pParticles, pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmGroup_update(pGame->pCollideableParticles, pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmQuadtree_collideGroup(pGame->pQt, pGame->pCollideableParticles);
+    ASSERT(rv == GFMRV_QUADTREE_OVERLAPED || rv == GFMRV_QUADTREE_DONE, rv);
+    if (rv == GFMRV_QUADTREE_OVERLAPED) {
+        rv = collide_run();
+        ASSERT(rv == GFMRV_OK, rv);
+    }
+#endif
+
     rv = player_preUpdate(pGamestate->pPlayer);
     ASSERT(rv == GFMRV_OK, rv);
 
     /* After everything collided */
+    i = 0;
+    while (i < gfmGenArr_getUsed(pGamestate->pEnes)) {
+        enemy *pEnemy;
+
+        pEnemy = gfmGenArr_getObject(pGamestate->pEnes, i);
+
+        rv = enemy_postUpdate(pEnemy);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        i++;
+    }
+
     rv = player_postUpdate(pGamestate->pPlayer);
     ASSERT(rv == GFMRV_OK, rv);
 
@@ -182,12 +220,26 @@ __ret:
 gfmRV gamestate_draw() {
     gamestate *pGamestate;
     gfmRV rv;
+    int i;
 
     pGamestate = (gamestate*)pState;
 
     /* TODO Render the game */
     rv = gfmTilemap_draw(pGamestate->pTm, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
+
+    i = 0;
+    while (i < gfmGenArr_getUsed(pGamestate->pEnes)) {
+        enemy *pEnemy;
+
+        pEnemy = gfmGenArr_getObject(pGamestate->pEnes, i);
+
+        rv = enemy_draw(pEnemy);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        i++;
+    }
+
     rv = player_draw(pGamestate->pPlayer);
     ASSERT(rv == GFMRV_OK, rv);
 

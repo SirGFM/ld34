@@ -43,7 +43,14 @@ gfmRV enemy_init(enemy *pEnemy, gfmParser *pParser, int type);
  *
  * @param  [ in]pEnemy  The enemy
  */
-gfmRV enemy_update(enemy *pEnemy);
+gfmRV enemy_preUpdate(enemy *pEnemy);
+
+/**
+ * Change state after all collisions
+ *
+ * @param  [ in]pEnemy  The enemy
+ */
+gfmRV enemy_postUpdate(enemy *pEnemy);
 
 /**
  * Render the enemy

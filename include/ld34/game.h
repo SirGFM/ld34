@@ -44,6 +44,9 @@ struct stGameCtx {
     int width;
     int height;
     int drawQt;
+
+    int run;
+    int next;
 };
 typedef struct stGameCtx gameCtx;
 
@@ -78,6 +81,9 @@ struct stGameButtons {
     button quit;
     button drawQt;
     button gif;
+    button run;
+    button next;
+    button pause;
 };
 typedef struct stGameButtons gameButtons;
 

@@ -60,6 +60,15 @@ static gfmRV main_updateButtons() {
     rv = gfm_getKeyState(&(pButtons->gif.state), &(pButtons->gif.num),
             pGame->pCtx, pButtons->gif.handle);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->run.state), &(pButtons->run.num),
+            pGame->pCtx, pButtons->run.handle);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->next.state), &(pButtons->next.num),
+            pGame->pCtx, pButtons->next.handle);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_getKeyState(&(pButtons->pause.state), &(pButtons->pause.num),
+            pGame->pCtx, pButtons->pause.handle);
+    ASSERT(rv == GFMRV_OK, rv);
 
     if ((pButtons->quit.state & gfmInput_justReleased) ==
             gfmInput_justReleased) {
@@ -80,6 +89,26 @@ static gfmRV main_updateButtons() {
             rv = gfm_recordGif(pGame->pCtx, 10000, "anim.gif", 8, 0);
             ASSERT(rv == GFMRV_OK, rv);
         }
+#endif
+    }
+
+    if ((pButtons->run.state & gfmInput_justReleased) ==
+            gfmInput_justReleased) {
+#ifdef DEBUG
+        pGame->run = 1;
+#endif
+    }
+    if ((pButtons->next.state & gfmInput_justReleased) ==
+            gfmInput_justReleased) {
+#ifdef DEBUG
+        pGame->next = 1;
+#endif
+    }
+    if ((pButtons->pause.state & gfmInput_justReleased) ==
+            gfmInput_justReleased) {
+#ifdef DEBUG
+        pGame->run = 0;
+        pGame->next = 0;
 #endif
     }
 
@@ -130,6 +159,10 @@ static gfmRV main_loop() {
             rv = main_updateButtons();
             ASSERT(rv == GFMRV_OK, rv);
 
+#if defined(DEBUG)
+            if (pGame->run || pGame->next) {
+#endif
+
             /* Update the current state */
             switch (pGame->curState) {
                 case state_intro: ASSERT(0, GFMRV_FUNCTION_NOT_IMPLEMENTED); break;
@@ -137,6 +170,13 @@ static gfmRV main_loop() {
                 default: ASSERT(0, GFMRV_INTERNAL_ERROR);
             }
             ASSERT(rv == GFMRV_OK, rv);
+
+#if defined(DEBUG)
+                if (pGame->next) {
+                    pGame->next = 0;
+                }
+            }
+#endif
 
             rv = gfm_fpsCounterUpdateEnd(pGame->pCtx);
             ASSERT(rv == GFMRV_OK, rv);
@@ -276,6 +316,12 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_addVirtualKey(&(pButtons->gif.handle), pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->run.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->next.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_addVirtualKey(&(pButtons->pause.handle), pGame->pCtx);
+    ASSERT(rv == GFMRV_OK, rv);
 
     rv = gfm_bindInput(pGame->pCtx, pButtons->left_leg.handle, gfmKey_f);
     ASSERT(rv == GFMRV_OK, rv);
@@ -318,6 +364,12 @@ int main(int argc, char *argv[]) {
     rv = gfm_bindInput(pGame->pCtx, pButtons->drawQt.handle, gfmKey_f1);
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_bindInput(pGame->pCtx, pButtons->gif.handle, gfmKey_f2);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindInput(pGame->pCtx, pButtons->run.handle, gfmKey_f5);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindInput(pGame->pCtx, pButtons->next.handle, gfmKey_f6);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfm_bindInput(pGame->pCtx, pButtons->pause.handle, gfmKey_f7);
     ASSERT(rv == GFMRV_OK, rv);
 
     rv = gfm_bindInput(pGame->pCtx, pButtons->quit.handle, gfmKey_esc);
