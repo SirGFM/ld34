@@ -148,6 +148,7 @@ extern void *pState;
 #define LIL_TANK     gfmType_reserved_7
 #define BULLET       gfmType_reserved_8
 #define PROP         gfmType_reserved_9
+#define TEXT         gfmType_reserved_10
 
 #endif /* __GAME_H__ */
 

@@ -180,11 +180,20 @@ gfmRV collide_run() {
             case FLOOR | (PL_UPPER << 16):
             case FLOOR | (PL_LOWER << 16):
             case FLOOR | (FLOOR << 16):
+            case FLOOR | (TEXT << 16):
             case BULLET | (LIL_TANK << 16):
             case BULLET | (BULLET << 16):
             case BULLET | (PROP << 16):
+            case BULLET | (TEXT << 16):
             case LIL_TANK | (BULLET << 16):
+            case LIL_TANK | (TEXT << 16):
             case PROP | (BULLET << 16):
+            case PROP | (TEXT << 16):
+            case TEXT | (FLOOR << 16):
+            case TEXT | (LIL_TANK << 16):
+            case TEXT | (BULLET << 16):
+            case TEXT | (PROP << 16):
+            case TEXT | (TEXT << 16):
             break;
             /* Collide against floor */
             case PL_LEFT_LEG | (FLOOR << 16):

@@ -8,12 +8,13 @@
 #==============================================================================
 # Define every object required by compilation
 #==============================================================================
-  OBJS =                        \
-          $(OBJDIR)/collide.o   \
-          $(OBJDIR)/enemy.o     \
-          $(OBJDIR)/gamestate.o \
-          $(OBJDIR)/main.o      \
-          $(OBJDIR)/player.o
+  OBJS =                          \
+          $(OBJDIR)/collide.o     \
+          $(OBJDIR)/enemy.o       \
+          $(OBJDIR)/gamestate.o   \
+          $(OBJDIR)/main.o        \
+          $(OBJDIR)/player.o      \
+          $(OBJDIR)/textManager.o
 #==============================================================================
 
 #==============================================================================

@@ -117,6 +117,8 @@ gfmRV gamestate_init() {
                 rv = enemy_init(pEnemy, pParser, LIL_TANK);
                 ASSERT(rv == GFMRV_OK, rv);
             }
+            else if (strcmp("text", pType) == 0) {
+            }
             else {
                 /* Got something that still isn't handled */
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))
