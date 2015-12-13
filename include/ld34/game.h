@@ -85,6 +85,7 @@ struct stGameAssets {
     int sfxPlHurt;
     int sfxCheckpoint;
     int sfxEnemyShoot;
+    int sfxText;
 };
 typedef struct stGameAssets gameAssets;
 

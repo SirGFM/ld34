@@ -294,6 +294,7 @@ __ret:
  * @param  [ in]pCtx The text manager
  */
 gfmRV textManager_postUpdate(textManager *pCtx) {
+    char c;
     gfmRV rv;
 
     rv = gfmText_didFinish(pCtx->pText);
@@ -332,6 +333,18 @@ gfmRV textManager_postUpdate(textManager *pCtx) {
 
     rv = gfmText_update(pCtx->pText, pGame->pCtx);
     ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfmText_getJustRendered(&c, pCtx->pText);
+    if (rv == GFMRV_OK && c != ' ' && c != '\n') {
+        static int textTime = 0;
+
+        if (textTime == 0) {
+            rv = gfm_playAudio(0, pGame->pCtx, pAssets->sfxText, 0.3);
+            ASSERT(rv == GFMRV_OK, rv);
+        }
+
+        textTime = (textTime + 1) % 2;
+    }
 
     rv = GFMRV_OK;
 __ret:
