@@ -142,7 +142,7 @@ gfmRV collide_bounceOff(gfmObject *pSelf, gfmObject *pObj) {
         rv = gfmObject_getVelocity(&vx, &vy, pObj);
         ASSERT(rv == GFMRV_OK, rv);
 
-        rv = gfmObject_setVelocity(pSelf, vx * 0.75, -abs(vy) * 0.5 - 0.1);
+        rv = gfmObject_setVelocity(pSelf, vx * 0.75, -abs(vy) * 0.5);
         ASSERT(rv == GFMRV_OK, rv);
     }
 
@@ -172,23 +172,25 @@ gfmRV collide_elastic(gfmObject *pObj1, gfmObject *pObj2) {
     rv = gfmObject_collide(pObj1, pObj2);
     ASSERT(rv == GFMRV_TRUE || rv == GFMRV_FALSE, rv);
 
-    if (y1 > y2) {
-        rv = gfmObject_setMovable(pObj1);
-    }
-    else {
-        rv = gfmObject_setMovable(pObj2);
-    }
-    ASSERT(rv == GFMRV_OK, rv);
+    if (rv == GFMRV_TRUE) {
+        if (y1 > y2) {
+            rv = gfmObject_setMovable(pObj1);
+        }
+        else {
+            rv = gfmObject_setMovable(pObj2);
+        }
+        ASSERT(rv == GFMRV_OK, rv);
 
-    rv = gfmObject_getVelocity(&vx1, &vy1, pObj1);
-    ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_getVelocity(&vx2, &vy2, pObj2);
-    ASSERT(rv == GFMRV_OK, rv);
+        rv = gfmObject_getVelocity(&vx1, &vy1, pObj1);
+        ASSERT(rv == GFMRV_OK, rv);
+        rv = gfmObject_getVelocity(&vx2, &vy2, pObj2);
+        ASSERT(rv == GFMRV_OK, rv);
 
-    rv = gfmObject_setVelocity(pObj1, -vx2 * 0.5, -abs(vy2) * 0.5 - 0.1);
-    ASSERT(rv == GFMRV_OK, rv);
-    rv = gfmObject_setVelocity(pObj2, -vx1 * 0.5, -abs(vy1) * 0.5 - 0.1);
-    ASSERT(rv == GFMRV_OK, rv);
+        rv = gfmObject_setVelocity(pObj1, -vx1 * 0.5, -abs(vy1) * 0.5);
+        ASSERT(rv == GFMRV_OK, rv);
+        rv = gfmObject_setVelocity(pObj2, -vx2 * 0.5, -abs(vy2) * 0.5);
+        ASSERT(rv == GFMRV_OK, rv);
+    }
 
     rv = GFMRV_OK;
 __ret:
