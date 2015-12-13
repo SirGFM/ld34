@@ -204,20 +204,34 @@ gfmRV collide_run() {
             case FLOOR | (PL_UPPER << 16):
             case FLOOR | (PL_LOWER << 16):
             case FLOOR | (FLOOR << 16):
+            case FLOOR | (BULLET << 16):
             case FLOOR | (TEXT << 16):
+            case BULLET | (FLOOR << 16):
             case BULLET | (LIL_TANK << 16):
+            case BULLET | (TURRET << 16):
             case BULLET | (BULLET << 16):
             case BULLET | (PROP << 16):
             case BULLET | (TEXT << 16):
             case LIL_TANK | (BULLET << 16):
             case LIL_TANK | (TEXT << 16):
+            case TURRET | (BULLET << 16):
+            case TURRET | (TEXT << 16):
             case PROP | (BULLET << 16):
             case PROP | (TEXT << 16):
             case TEXT | (FLOOR << 16):
             case TEXT | (LIL_TANK << 16):
+            case TEXT | (TURRET << 16):
             case TEXT | (BULLET << 16):
             case TEXT | (PROP << 16):
             case TEXT | (TEXT << 16):
+            case PL_UPPER | (TURRET << 16):
+            case PL_LOWER | (TURRET << 16):
+            case TURRET | (PL_UPPER << 16):
+            case TURRET | (PL_LOWER << 16):
+            case PL_UPPER | (LIL_TANK << 16):
+            case PL_LOWER | (LIL_TANK << 16):
+            case LIL_TANK | (PL_UPPER << 16):
+            case LIL_TANK | (PL_LOWER << 16):
             break;
             /* Collide against floor */
             case PL_LEFT_LEG | (FLOOR << 16):
@@ -259,27 +273,31 @@ gfmRV collide_run() {
                 rv = collide_spawnExplosion((gfmGroupNode*)pChild1, pObj1);
             } break;
             /* Hurt player or kill enemy */
-            case PL_UPPER | (LIL_TANK << 16):
-            case PL_LOWER | (LIL_TANK << 16):
+            case PL_LEFT_LEG | (TURRET << 16):
+            case PL_RIGHT_LEG | (TURRET << 16):
             case PL_LEFT_LEG | (LIL_TANK << 16):
             case PL_RIGHT_LEG | (LIL_TANK << 16): {
             } break;
-            case LIL_TANK | (PL_UPPER << 16):
-            case LIL_TANK | (PL_LOWER << 16):
+            case TURRET | (PL_LEFT_LEG << 16):
+            case TURRET | (PL_RIGHT_LEG << 16):
             case LIL_TANK | (PL_LEFT_LEG << 16):
             case LIL_TANK | (PL_RIGHT_LEG << 16): {
             } break;
-            /* Collide LIL_TANK with floor */
+            /* Collide enemy with floor */
+            case TURRET | (FLOOR << 16):
             case LIL_TANK | (FLOOR << 16): {
                 rv = enemy_collideFloor((enemy*)pChild1, pObj2);
             } break;
+            case FLOOR | (TURRET << 16):
             case FLOOR | (LIL_TANK << 16): {
                 rv = enemy_collideFloor((enemy*)pChild2, pObj1);
             } break;
-            /* Make LIL_TANK push pellets */
+            /* Make enemies push pellets */
+            case TURRET | (PROP << 16):
             case LIL_TANK | (PROP << 16): {
                 rv = collide_pushObject(pObj1, pObj2);
             } break;
+            case PROP | (TURRET << 16):
             case PROP | (LIL_TANK << 16): {
                 rv = collide_pushObject(pObj2, pObj1);
             } break;

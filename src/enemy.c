@@ -21,6 +21,12 @@ int en_liltank_data[] = {
 /* DEATH    */   12 , 6 , 0  , 68,68,68,68,69,68,69,68,69,68,69,68
 };
 
+int en_turret_data[] = {
+              /* len|fps|loop|data... */
+/* IDLE     */    2 , 6 , 1  , 96,97,
+/* DEATH    */   12 , 6 , 1  , 98,99,98,99,98,99,98,99,98,99,98,99
+};
+
 struct stEnemy {
     gfmSprite *pSpr;
     int timeToAction;
@@ -74,12 +80,15 @@ gfmRV enemy_init(enemy *pEnemy, gfmParser *pParser, int type) {
 
     rv = gfmParser_getPos(&x, &y, pParser);
     ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmParser_getDimensions(&w, &h, pParser);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    y -= h;
 
     pData = 0;
     firstAnim = 0;
     switch (type) {
         case LIL_TANK: {
-            y -= 9;
             w = 6;
             h = 8;
             ox = -5;
@@ -88,6 +97,17 @@ gfmRV enemy_init(enemy *pEnemy, gfmParser *pParser, int type) {
 
             pData = en_liltank_data;
             dataLen = sizeof(en_liltank_data) / sizeof(int);
+        } break;
+        case TURRET: {
+            x += 4;
+            w = 8;
+            h = 8;
+            ox = -4;
+            oy = -8;
+            pSset = pAssets->pSset16x16;
+
+            pData = en_turret_data;
+            dataLen = sizeof(en_turret_data) / sizeof(int);
         } break;
         default: {
             w = 1;
@@ -119,6 +139,12 @@ gfmRV enemy_init(enemy *pEnemy, gfmParser *pParser, int type) {
             pEnemy->timeToAction = LIL_TANK_BETWEEN_SHOOT;
             pEnemy->num = LIL_TANK_NUM_SHOOTS;
         } break;
+        case TURRET: {
+            pEnemy->timeToAction = TURRET_BETWEEN_SHOOT;
+            pEnemy->num = TURRET_NUM_SHOOTS;
+            rv = gfmSprite_setAcceleration(pEnemy->pSpr, 0.0, GRAV);
+            ASSERT(rv == GFMRV_OK, rv);
+        } break;
         default: {}
     }
 
@@ -147,6 +173,48 @@ gfmRV enemy_preUpdate(enemy *pEnemy) {
     else {
         /* Do next action */
         switch (pEnemy->type) {
+            case TURRET: {
+                if (pEnemy->num > 0) {
+                    gfmSprite *pSpr;
+                    int x, y;
+
+                    rv = gfmSprite_getPosition(&x, &y, pEnemy->pSpr);
+                    ASSERT(rv == GFMRV_OK, rv);
+
+                    x += 4;
+
+                    /* Spawn a bullet */
+                    rv = gfmGroup_recycle(&pSpr, pGame->pBullets);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setPosition(pGame->pBullets, x, y-3);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setAnimation(pGame->pBullets, P_BULLET);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setVelocity(pGame->pBullets, 0.0, TURRET_BULLET_VY);
+                    ASSERT(rv == GFMRV_OK, rv);
+
+                    /* Spawn a pellet */
+                    rv = gfmGroup_recycle(&pSpr, pGame->pProps);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setPosition(pGame->pProps, x, y-1);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setAnimation(pGame->pProps, P_PELLET1);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setVelocity(pGame->pProps, 25,
+                            TURRET_BULLET_VY * 0.75);
+                    ASSERT(rv == GFMRV_OK, rv);
+                    rv = gfmGroup_setAcceleration(pGame->pProps, 0, GRAV);
+                    ASSERT(rv == GFMRV_OK, rv);
+
+
+                    pEnemy->timeToAction = LIL_TANK_BETWEEN_SHOOT;
+                    pEnemy->num--;
+                }
+                else {
+                    pEnemy->timeToAction = TURRET_TIME_TO_SHOOT;
+                    pEnemy->num = TURRET_NUM_SHOOTS;
+                }
+            } break;
             case LIL_TANK: {
                 int flipped;
 

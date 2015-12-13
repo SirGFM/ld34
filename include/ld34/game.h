@@ -147,6 +147,11 @@ extern void *pState;
 #define LIL_TANK_BETWEEN_SHOOT 300
 #define LIL_TANK_NUM_SHOOTS 5
 
+#define TURRET_TIME_TO_SHOOT 10000
+#define TURRET_BETWEEN_SHOOT 150
+#define TURRET_NUM_SHOOTS 10
+#define TURRET_BULLET_VY -80
+
 #define PL_UPPER     gfmType_reserved_2
 #define PL_LOWER     gfmType_reserved_3
 #define PL_LEFT_LEG  gfmType_reserved_4
@@ -156,6 +161,7 @@ extern void *pState;
 #define BULLET       gfmType_reserved_8
 #define PROP         gfmType_reserved_9
 #define TEXT         gfmType_reserved_10
+#define TURRET       gfmType_reserved_11
 
 #endif /* __GAME_H__ */
 

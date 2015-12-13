@@ -120,6 +120,15 @@ gfmRV gamestate_init() {
                 rv = enemy_init(pEnemy, pParser, LIL_TANK);
                 ASSERT(rv == GFMRV_OK, rv);
             }
+            else if (strcmp("turret", pType) == 0) {
+                enemy *pEnemy;
+
+                gfmGenArr_getNextRef(enemy, pGamestate->pEnes, 1, pEnemy, enemy_getNew);
+                gfmGenArr_push(pGamestate->pEnes);
+
+                rv = enemy_init(pEnemy, pParser, TURRET);
+                ASSERT(rv == GFMRV_OK, rv);
+            }
             else if (strcmp("text", pType) == 0) {
                 rv = textManager_addEvent(pGame->pTextManager, pParser);
             }
