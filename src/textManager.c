@@ -234,7 +234,26 @@ void textManager_pushEvent(textManager *pCtx, textEvent *pEv) {
  * @param  [ in]len  The string's length
  * @param  [ in]ttl  How long should the text be displayed after completition
  */
-gfmRV textManager_pushText(textManager *pCtx, char *pStr, int len);
+gfmRV textManager_pushText(textManager *pCtx, char *pStr, int len, int ttl) {
+    gfmRV rv;
+    textEvent *pEv;
+
+    gfmGenArr_getNextRef(textEvent, pCtx->pTexEvs, 1, pEv, textEvent_getNew);
+    gfmGenArr_push(pCtx->pTexEvs);
+
+    rv = gfmObject_init(pEv->pSelf, -100, -100, 4, 4, pEv, TEXT);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmString_init(pEv->pString, pStr, len, 1/*doCopy*/);
+    ASSERT(rv == GFMRV_OK, rv);
+    pEv->repeat = 0;
+    pEv->ttl = ttl;
+
+    textManager_pushEvent(pCtx, pEv);
+
+    rv = GFMRV_OK;
+__ret:
+    return rv;
+}
 
 /**
  * Update all events and collide 'em

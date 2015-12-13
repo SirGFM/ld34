@@ -7,6 +7,7 @@
 #include <GFraMe/gfmError.h>
 #include <GFraMe/gfmObject.h>
 #include <GFraMe/gfmQuadtree.h>
+#include <GFraMe/gfmSave.h>
 #include <GFraMe/gfmSprite.h>
 #include <GFraMe/gfmSpriteset.h>
 
@@ -21,6 +22,44 @@
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))
 #  include <signal.h>
 #endif
+
+static inline gfmRV collide_checkpoint(gfmObject *pPl, gfmObject *pCheckpoint) {
+    gfmRV rv;
+    gfmSave *pSave;
+    int x, y;
+
+    pSave = 0;
+
+    rv = gfmObject_isOverlaping(pPl, pCheckpoint);
+    if (rv != GFMRV_TRUE) {
+        return GFMRV_OK;
+    }
+
+    rv = gfmObject_getPosition(&x, &y, pPl);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmObject_setPosition(pCheckpoint, -100, -100);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmObject_setDimensions(pCheckpoint, 4, 4);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = gfmSave_getNew(&pSave);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmSave_bindStatic(pSave, pGame->pCtx, SAVE_FILE);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmSave_writeStatic(pSave, "checkpoint_x", x);
+    ASSERT(rv == GFMRV_OK, rv);
+    rv = gfmSave_writeStatic(pSave, "checkpoint_y", y-16);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = textManager_pushTextStatic(pGame->pTextManager, "               CHECKPOINT", 2000);
+    ASSERT(rv == GFMRV_OK, rv);
+
+    rv = GFMRV_OK;
+__ret:
+    gfmSave_free(&pSave);
+
+    return rv;
+}
 
 static inline gfmRV collide_handlePlEnemy(player *pPl, gfmObject *pPlObj,
         enemy *pEne, gfmObject *pEneObj) {
@@ -219,37 +258,44 @@ gfmRV collide_run() {
             case PL_LOWER | (PL_RIGHT_LEG << 16):
             case PL_LOWER | (FLOOR << 16):
             case PL_LOWER | (PROP << 16):
+            case PL_LOWER | (CHECKPOINT << 16):
             case PL_LEFT_LEG | (PL_UPPER << 16):
             case PL_LEFT_LEG | (PL_LOWER << 16):
             case PL_LEFT_LEG | (PL_LEFT_LEG << 16):
             case PL_LEFT_LEG | (PL_RIGHT_LEG << 16):
+            case PL_LEFT_LEG | (CHECKPOINT << 16):
             case PL_RIGHT_LEG | (PL_UPPER << 16):
             case PL_RIGHT_LEG | (PL_LOWER << 16):
             case PL_RIGHT_LEG | (PL_LEFT_LEG << 16):
             case PL_RIGHT_LEG | (PL_RIGHT_LEG << 16):
+            case PL_RIGHT_LEG | (CHECKPOINT << 16):
             case FLOOR | (PL_UPPER << 16):
             case FLOOR | (PL_LOWER << 16):
             case FLOOR | (FLOOR << 16):
             case FLOOR | (BULLET << 16):
             case FLOOR | (TEXT << 16):
+            case FLOOR | (CHECKPOINT << 16):
             case BULLET | (FLOOR << 16):
             case BULLET | (LIL_TANK << 16):
             case BULLET | (TURRET << 16):
             case BULLET | (BULLET << 16):
             case BULLET | (PROP << 16):
             case BULLET | (TEXT << 16):
+            case BULLET | (CHECKPOINT << 16):
             case LIL_TANK | (BULLET << 16):
             case LIL_TANK | (TEXT << 16):
             case TURRET | (BULLET << 16):
             case TURRET | (TEXT << 16):
             case PROP | (BULLET << 16):
             case PROP | (TEXT << 16):
+            case PROP | (CHECKPOINT << 16):
             case TEXT | (FLOOR << 16):
             case TEXT | (LIL_TANK << 16):
             case TEXT | (TURRET << 16):
             case TEXT | (BULLET << 16):
             case TEXT | (PROP << 16):
             case TEXT | (TEXT << 16):
+            case TEXT | (CHECKPOINT << 16):
             case PL_UPPER | (TURRET << 16):
             case PL_LOWER | (TURRET << 16):
             case TURRET | (PL_UPPER << 16):
@@ -258,6 +304,13 @@ gfmRV collide_run() {
             case PL_LOWER | (LIL_TANK << 16):
             case LIL_TANK | (PL_UPPER << 16):
             case LIL_TANK | (PL_LOWER << 16):
+            case CHECKPOINT | (TEXT << 16):
+            case CHECKPOINT | (PROP << 16):
+            case CHECKPOINT | (BULLET << 16):
+            case CHECKPOINT | (FLOOR << 16):
+            case CHECKPOINT | (PL_LEFT_LEG << 16):
+            case CHECKPOINT | (PL_RIGHT_LEG << 16):
+            case CHECKPOINT | (PL_LOWER << 16):
             break;
             /* Collide against floor */
             case PL_LEFT_LEG | (FLOOR << 16):
@@ -351,6 +404,13 @@ gfmRV collide_run() {
             case TEXT | (PL_RIGHT_LEG << 16): {
                 textManager_pushEvent(pGame->pTextManager, (textEvent*)pChild1);
                 rv = GFMRV_OK;
+            } break;
+            /* Checkpoint! */
+            case PL_UPPER | (CHECKPOINT << 16): {
+                rv = collide_checkpoint(pObj1, pObj2);
+            } break;
+            case CHECKPOINT | (PL_UPPER << 16): {
+                rv = collide_checkpoint(pObj2, pObj1);
             } break;
             default: {
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))

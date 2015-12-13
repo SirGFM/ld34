@@ -25,6 +25,7 @@
 #endif
 
 gfmGenArr_define(enemy);
+gfmGenArr_define(gfmObject);
 
 static const char *pTmDict[] = {
     "floor"
@@ -38,6 +39,7 @@ struct stGamestate {
     player *pPlayer;
     gfmTilemap *pTm;
     gfmGenArr_var(enemy, pEnes);
+    gfmGenArr_var(gfmObject, pChkPoints);
 };
 typedef struct stGamestate gamestate;
 
@@ -96,11 +98,32 @@ gfmRV gamestate_init() {
         ASSERT(rv == GFMRV_OK, rv);
 
         if (type == gfmParserType_area) {
-            /* TODO Handle areas later, if needed */
+            char *pType;
+
+            rv = gfmParser_getIngameType(&pType, pParser);
+            ASSERT(rv == GFMRV_OK, rv);
+
+            if (strcmp("checkpoint", pType) == 0) {
+                int h, w, x, y;
+                gfmObject *pObj;
+
+                rv = gfmParser_getPos(&x, &y, pParser);
+                ASSERT(rv == GFMRV_OK, rv);
+                rv = gfmParser_getDimensions(&w, &h, pParser);
+                ASSERT(rv == GFMRV_OK, rv);
+
+                gfmGenArr_getNextRef(gfmObject, pGamestate->pChkPoints, 1, pObj, gfmObject_getNew);
+                gfmGenArr_push(pGamestate->pChkPoints);
+
+                rv = gfmObject_init(pObj, x, y, w, h, 0, CHECKPOINT);
+                ASSERT(rv == GFMRV_OK, rv);
+            }
+            else {
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))
-            raise(SIGINT);
+                raise(SIGINT);
 #endif
-            ASSERT(0, GFMRV_INTERNAL_ERROR);
+                ASSERT(0, GFMRV_INTERNAL_ERROR);
+            }
         }
         else {
             char *pType;
@@ -197,6 +220,20 @@ gfmRV gamestate_update() {
         pEnemy = gfmGenArr_getObject(pGamestate->pEnes, i);
 
         rv = enemy_preUpdate(pEnemy);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        i++;
+    }
+
+    i = 0;
+    while (i < gfmGenArr_getUsed(pGamestate->pChkPoints)) {
+        gfmObject *pObj;
+
+        pObj = gfmGenArr_getObject(pGamestate->pChkPoints, i);
+
+        rv = gfmObject_update(pObj, pGame->pCtx);
+        ASSERT(rv == GFMRV_OK, rv);
+        rv = gfmQuadtree_populateObject(pGame->pQt, pObj);
         ASSERT(rv == GFMRV_OK, rv);
 
         i++;
@@ -315,6 +352,7 @@ void gamestate_clean() {
     gfmTilemap_free(&(pGamestate->pTm));
     player_clean(&(pGamestate->pPlayer));
     gfmGenArr_clean(pGamestate->pEnes, enemy_clean);
+    gfmGenArr_clean(pGamestate->pChkPoints, gfmObject_free);
     textManager_clean(&(pGame->pTextManager));
 
     free(pState);

@@ -131,6 +131,8 @@ extern void *pState;
 #define TEXATLAS "atlas.bmp"
 #define COLORKEY 0xff00ff
 
+#define SAVE_FILE "game.sav"
+
 #define GRAV 100
 #define PARTICLE_TTL 10000
 #define NUM_PARTICLES 2048
@@ -165,6 +167,7 @@ extern void *pState;
 #define PROP         gfmType_reserved_9
 #define TEXT         gfmType_reserved_10
 #define TURRET       gfmType_reserved_11
+#define CHECKPOINT   gfmType_reserved_12
 
 #endif /* __GAME_H__ */
 

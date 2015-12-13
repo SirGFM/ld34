@@ -62,7 +62,9 @@ void textManager_pushEvent(textManager *pCtx, textEvent *pEv);
  * @param  [ in]len  The string's length
  * @param  [ in]ttl  How long should the text be displayed after completition
  */
-gfmRV textManager_pushText(textManager *pCtx, char *pStr, int len);
+gfmRV textManager_pushText(textManager *pCtx, char *pStr, int len, int ttl);
+#define textManager_pushTextStatic(pCtx, pStr, ttl) \
+    textManager_pushText(pCtx, pStr, sizeof(pStr), ttl)
 
 /**
  * Update all events and collide 'em

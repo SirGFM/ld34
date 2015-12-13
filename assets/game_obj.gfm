@@ -11,9 +11,10 @@ obj text 688 224 48 16 [ repeat , f ] [ string , "DIDN'T I MAKE MYSELF CLEAR? I 
 obj text 784 224 56 16 [ repeat , f ] [ string , "DIDN'T I MAKE MYSELF CLEAR? I SAID \"OVER IT\", NOT \"INTO IT\". WELL, A SMALL JUMP WILL GET YOU OUT THERE..." ] [ ttl , 1000 ]
 obj text 872 200 24 80 [ repeat , f ] [ string , "LOOKS LIKE THERE ARE ENEMIES AHEAD. SMALL FRIES ONLY, BUT ENEMIES, NONETHELESS." ] [ ttl , 3000 ]
 obj text 880 200 24 72 [ repeat , f ] [ string , "THOSE AREN'T THAT MEANACING, SO YOU COULD TRY TO AVOID 'EM... OR YOU COULD STOMP 'EM!" ] [ ttl , 1500 ]
-obj text 888 200 16 64 [ repeat , f ] [ string , "I'LL START TO GET THE SYNC SYSTEM BACK ONLY. I'LL GET BACK TO YOU GUYS AS SOON AS IT'S READY!" ] [ ttl , 1500 ]
+obj text 888 200 16 64 [ repeat , f ] [ string , "I'LL START TO GET THE SYNC SYSTEM BACK ONLINE. I'LL GET BACK TO YOU GUYS AS SOON AS IT'S READY!" ] [ ttl , 1500 ]
 obj turret 1000 216 16 16
 obj turret 1048 216 16 16
 obj turret 1144 216 16 16
 obj turret 1232 216 16 16
 obj turret 1256 216 16 16
+area checkpoint 944 144 16 56
