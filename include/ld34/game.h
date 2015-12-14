@@ -63,6 +63,7 @@ struct stGameCtx {
     int next;
 
     int hitCount;
+    int enemiesKilled;
     int exit;
 };
 typedef struct stGameCtx gameCtx;

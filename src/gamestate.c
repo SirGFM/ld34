@@ -287,8 +287,9 @@ gfmRV gamestate_update() {
     ASSERT(rv == GFMRV_OK, rv);
 
     if (pGame->exit == 1) {
-        char pTxt[] = "YOU GOT TO THE EXIT! YOU WERE HIT 000000 TIMER.\nTHANKS "
-                "FOR PLAYING\nPRESS 'R' TO RESTART";
+        char pTxt[] = "YOU GOT TO THE EXIT! YOU WERE HIT 000000 TIMES AND "
+                "KILLED 00 ENEMIES.\n\nTHANKS FOR PLAYING\n\nPRESS 'R' TO "
+                "RESTART";
         char *pTmp;
         gfmSave *pSave;
 
@@ -309,6 +310,12 @@ gfmRV gamestate_update() {
         while (pGame->hitCount > 0) {
             *pTmp = (pGame->hitCount % 10) + '0';
             pGame->hitCount /= 10;
+            pTmp--;
+        }
+        pTmp = pTxt + 59;
+        while (pGame->enemiesKilled > 0) {
+            *pTmp = (pGame->enemiesKilled % 10) + '0';
+            pGame->enemiesKilled /= 10;
             pTmp--;
         }
 

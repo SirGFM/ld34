@@ -212,6 +212,7 @@ gfmRV enemy_preUpdate(enemy *pEnemy) {
             pEnemy->isHurt = 3;
             rv = gfm_playAudio(0, pGame->pCtx, pAssets->sfxEnemyExplosion, 0.4);
             ASSERT(rv == GFMRV_OK, rv);
+            pGame->enemiesKilled++;
         }
 
         return GFMRV_OK;
