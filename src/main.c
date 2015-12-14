@@ -340,9 +340,9 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_loadAudio(&(pAssets->audBass2), pGame->pCtx, "bass_2.mml", 10);
     ASSERT(rv == GFMRV_OK, rv);
-#endif
     rv = gfm_loadAudio(&(pAssets->audMelody), pGame->pCtx, "melody.mml", 10);
     ASSERT(rv == GFMRV_OK, rv);
+#endif
 
 #define LOAD_SFX(var, name) \
     rv = gfm_loadAudio(&(pAssets->sfx##var), pGame->pCtx, name, \
@@ -565,9 +565,9 @@ int main(int argc, char *argv[]) {
     ASSERT(rv == GFMRV_OK, rv);
     rv = gfm_playAudio(0, pGame->pCtx, pAssets->audBass2, 1.0);
     ASSERT(rv == GFMRV_OK, rv);
-#endif
     rv = gfm_playAudio(0, pGame->pCtx, pAssets->audMelody, 1.0);
     ASSERT(rv == GFMRV_OK, rv);
+#endif
 
     /* TODO Set the main state as the intro */
     pGame->nextState = state_game;
