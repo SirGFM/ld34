@@ -4,9 +4,7 @@ obj text 128 200 24 56 [ repeat , f ] [ string , "THIS AREA SEEMS SAFE...\nLET'S
 obj text 216 200 24 64 [ repeat , f ] [ string , "WHAT ABOUT THAT SMALL STEP? IF THAT WERE A ISSUE YOU GUYS WOULDN'T EVEN HAVE GOTTEN HERE!\nSTOP COMPLAINING AND MOVE!" ] [ ttl , 2250 ]
 obj text 352 200 24 64 [ repeat , f ] [ string , "FAIR ENOUGH... IT'S NOT A SMALL STEP, BUT IT'S STILL ONLY A SMALL STAIR." ] [ ttl , 1500 ]
 obj text 464 168 32 64 [ repeat , f ] [ string , "HA! THIS SMALL FALL WOULD BE NOTHING TO THE MECHA!" ] [ ttl , 3000 ]
-obj player -8 176 32 16
 obj text 576 200 32 64 [ repeat , f ] [ string , "LET'S TRY SOMETHING DIFFERENT. DO YOU SEE THAT SMALL GAP? STOMP BOTH FEET AT THE FLOOR AT THE SAME TIME AND TRY TO JUMP IT." ] [ ttl , 3000 ]
-obj player 904 152 32 16
 obj text 688 224 48 16 [ repeat , f ] [ string , "DIDN'T I MAKE MYSELF CLEAR? I SAID \"OVER IT\", NOT \"INTO IT\". WELL, A SMALL JUMP WILL GET YOU OUT THERE..." ] [ ttl , 1000 ]
 obj text 784 224 56 16 [ repeat , f ] [ string , "DIDN'T I MAKE MYSELF CLEAR? I SAID \"OVER IT\", NOT \"INTO IT\". WELL, A SMALL JUMP WILL GET YOU OUT THERE..." ] [ ttl , 1000 ]
 obj text 872 200 24 80 [ repeat , f ] [ string , "LOOKS LIKE THERE ARE ENEMIES AHEAD. SMALL FRIES ONLY, BUT ENEMIES, NONETHELESS." ] [ ttl , 3000 ]
@@ -18,3 +16,14 @@ obj turret 1144 216 16 16
 obj turret 1232 216 16 16
 obj turret 1256 216 16 16
 area checkpoint 944 144 16 56
+obj player -8 176 32 16
+area checkpoint 1320 120 24 56
+obj player 1280 176 32 16
+obj text 1352 200 24 88 [ repeat , f ] [ string , "SO... REMEMBER THAT \"SYNC SYSTEM\" THAT I MENTIONED? FORGET THAT..." ] [ ttl , 1500 ]
+obj text 1360 200 24 80 [ repeat , f ] [ string , "THE SERVERS KEEP RETURNING AN ERROR \"CAN'T LOAD SYSTEM IN UNDER 48 HOURS\"." ] [ ttl , 2000 ]
+obj lil_tank 1488 200 16 16
+obj text 1576 192 24 80 [ repeat , f ] [ string , "YOU WANT TO KNOW THE OBJECTIVE OF THE MISSION AGAIN? HOW COULD YOU GUYS HAVE FORGOTTEN SOMETHING SO IMPORTANT?" ] [ ttl , 2500 ]
+obj text 1600 200 24 88 [ repeat , f ] [ string , "ACTUALLY... YOU WERE SUPPOSED TO USED THE SYNC SYSTEM THE POWER UP THE MECHA AND DESTROY THE GROWING ALIEN MENACE..." ] [ ttl , 2500 ]
+obj text 1608 200 24 80 [ repeat , f ] [ string , "EVERYONE KNOWS THAT THE ONLY THING ABLE TO DESTROY GIGANTIC ENEMIES ARE FULLY POWERED MECHAS!" ] [ ttl , 2500 ]
+obj text 1616 200 24 72 [ repeat , f ] [ string , "BUT NOW THAT THE PLAN FAILED... PERHAPS WE SHOULD HEAD BACK AND RE-PLAN." ] [ ttl , 1200 ]
+obj text 1624 200 24 64 [ repeat , f ] [ string , "THERE'S AN EXIT RIGHT AHEAD." ] [ ttl , 1200 ]
