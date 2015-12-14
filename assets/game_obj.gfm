@@ -37,4 +37,3 @@ obj lil_tank 2376 200 16 16
 area checkpoint 2408 120 24 56
 area exit 2640 112 48 96
 obj player -8 176 32 16
-obj player 1632 176 32 16

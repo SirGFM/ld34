@@ -229,7 +229,6 @@
   <object id="51" name="lil_tank" type="lil_tank" gid="4161" x="2376" y="200" width="16" height="16"/>
   <object id="52" name="checkpoint_1" type="checkpoint" x="2408" y="120" width="24" height="56"/>
   <object id="54" name="exit" type="exit" x="2640" y="112" width="48" height="96"/>
-  <object id="55" name="player" type="player" gid="6163" x="-8" y="176" width="32" height="16" visible="0"/>
-  <object id="56" name="summyplayer" type="player" gid="6163" x="1632" y="176" width="32" height="16"/>
+  <object id="55" name="player" type="player" gid="6163" x="-8" y="176" width="32" height="16"/>
  </objectgroup>
 </map>
