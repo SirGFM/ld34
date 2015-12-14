@@ -9,6 +9,7 @@
 #include <GFraMe/gfmGenericArray.h>
 #include <GFraMe/gfmParser.h>
 #include <GFraMe/gfmQuadtree.h>
+#include <GFraMe/gfmSave.h>
 #include <GFraMe/gfmTilemap.h>
 
 #include <ld34/collide.h>
@@ -60,7 +61,7 @@ gfmRV gamestate_init() {
     ASSERT(pGamestate, GFMRV_ALLOC_FAILED);
     memset(pGamestate, 0x0, sizeof(gamestate));
 
-    rv = textManager_init(&(pGame->pTextManager), 0, 0, BBWDT / 8, 5, 1);
+    rv = textManager_init(&(pGame->pTextManager), 0, 0, BBWDT / 8, 7, 1);
     ASSERT(rv == GFMRV_OK, rv);
 
     /* Initialize everything */
@@ -284,6 +285,39 @@ gfmRV gamestate_update() {
 
     rv = player_postUpdate(pGamestate->pPlayer);
     ASSERT(rv == GFMRV_OK, rv);
+
+    if (pGame->exit == 1) {
+        char pTxt[] = "YOU GOT TO THE EXIT! YOU WERE HIT 000000 TIMER.\nTHANKS "
+                "FOR PLAYING\nPRESS 'R' TO RESTART";
+        char *pTmp;
+        gfmSave *pSave;
+
+        /* Erase the file (so it restarts properly) */
+        rv = gfmSave_getNew(&pSave);
+        ASSERT(rv == GFMRV_OK, rv);
+        rv = gfmSave_bindStatic(pSave, pGame->pCtx, SAVE_FILE);
+        ASSERT(rv == GFMRV_OK, rv);
+        rv = gfmSave_erase(pSave);
+        ASSERT(rv == GFMRV_OK, rv);
+        gfmSave_free(&pSave);
+        pSave = 0;
+
+        if (pGame->hitCount > 999999) {
+            pGame->hitCount = 999999;
+        }
+        pTmp = pTxt + 39;
+        while (pGame->hitCount > 0) {
+            *pTmp = (pGame->hitCount % 10) + '0';
+            pGame->hitCount /= 10;
+            pTmp--;
+        }
+
+        /* Push final message */
+        rv = textManager_pushTextStatic(pGame->pTextManager, pTxt, 999999);
+        ASSERT(rv == GFMRV_OK, rv);
+
+        pGame->exit++;
+    }
 
     rv = textManager_postUpdate(pGame->pTextManager);
     ASSERT(rv == GFMRV_OK, rv);

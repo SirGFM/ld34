@@ -110,6 +110,8 @@ static inline gfmRV collide_spawnExplosion(gfmGroupNode *pCtx, gfmObject *pObj) 
     rv = gfm_playAudio(0, pGame->pCtx, pAssets->sfxPlHurt, 0.4);
     ASSERT(rv == GFMRV_OK, rv);
 
+    pGame->hitCount++;
+
     rv = GFMRV_OK;
 __ret:
     return rv;
@@ -429,10 +431,14 @@ gfmRV collide_run() {
             } break;
             /* Exit! */
             case PL_UPPER | (EXIT << 16): {
-                rv = collide_checkpoint(pObj1, pObj2);
+                if (!pGame->exit) {
+                    pGame->exit = 1;
+                }
             } break;
             case EXIT | (PL_UPPER << 16): {
-                rv = collide_checkpoint(pObj2, pObj1);
+                if (!pGame->exit) {
+                    pGame->exit = 1;
+                }
             } break;
             default: {
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))
