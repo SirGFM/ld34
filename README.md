@@ -13,7 +13,7 @@ SDL2 is available on Ubuntu through the package manager. Just run the following,
 to install it:
 
 ```
-$ sudo apt-get install libsdl2-2.0.0
+$ sudo apt-get install libsdl2-2.0.0-dev
 ```
 
 The others libs must be cloned/downloaded and manually built. Check the README
