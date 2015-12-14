@@ -182,6 +182,7 @@ extern void *pState;
 #define TEXT         gfmType_reserved_10
 #define TURRET       gfmType_reserved_11
 #define CHECKPOINT   gfmType_reserved_12
+#define EXIT         gfmType_reserved_13
 
 #endif /* __GAME_H__ */
 

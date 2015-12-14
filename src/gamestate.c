@@ -99,24 +99,17 @@ gfmRV gamestate_init() {
 
         if (type == gfmParserType_area) {
             char *pType;
+            gfmObject *pObj;
+            int h, type, w, x, y;
 
             rv = gfmParser_getIngameType(&pType, pParser);
             ASSERT(rv == GFMRV_OK, rv);
 
             if (strcmp("checkpoint", pType) == 0) {
-                int h, w, x, y;
-                gfmObject *pObj;
-
-                rv = gfmParser_getPos(&x, &y, pParser);
-                ASSERT(rv == GFMRV_OK, rv);
-                rv = gfmParser_getDimensions(&w, &h, pParser);
-                ASSERT(rv == GFMRV_OK, rv);
-
-                gfmGenArr_getNextRef(gfmObject, pGamestate->pChkPoints, 1, pObj, gfmObject_getNew);
-                gfmGenArr_push(pGamestate->pChkPoints);
-
-                rv = gfmObject_init(pObj, x, y, w, h, 0, CHECKPOINT);
-                ASSERT(rv == GFMRV_OK, rv);
+                type = CHECKPOINT;
+            }
+            else if (strcmp("exit", pType) == 0) {
+                type = EXIT;
             }
             else {
 #if defined(DEBUG) && !(defined(__WIN32) || defined(__WIN32__))
@@ -124,6 +117,17 @@ gfmRV gamestate_init() {
 #endif
                 ASSERT(0, GFMRV_INTERNAL_ERROR);
             }
+
+            rv = gfmParser_getPos(&x, &y, pParser);
+            ASSERT(rv == GFMRV_OK, rv);
+            rv = gfmParser_getDimensions(&w, &h, pParser);
+            ASSERT(rv == GFMRV_OK, rv);
+
+            gfmGenArr_getNextRef(gfmObject, pGamestate->pChkPoints, 1, pObj, gfmObject_getNew);
+            gfmGenArr_push(pGamestate->pChkPoints);
+
+            rv = gfmObject_init(pObj, x, y, w, h, 0, type);
+            ASSERT(rv == GFMRV_OK, rv);
         }
         else {
             char *pType;

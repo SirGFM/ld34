@@ -16,14 +16,24 @@ obj turret 1144 216 16 16
 obj turret 1232 216 16 16
 obj turret 1256 216 16 16
 area checkpoint 944 144 16 56
-obj player -8 176 32 16
 area checkpoint 1320 120 24 56
-obj player 1280 176 32 16
 obj text 1352 200 24 88 [ repeat , f ] [ string , "SO... REMEMBER THAT \"SYNC SYSTEM\" THAT I MENTIONED? FORGET THAT..." ] [ ttl , 1500 ]
 obj text 1360 200 24 80 [ repeat , f ] [ string , "THE SERVERS KEEP RETURNING AN ERROR \"CAN'T LOAD SYSTEM IN UNDER 48 HOURS\"." ] [ ttl , 2000 ]
 obj lil_tank 1488 200 16 16
 obj text 1576 192 24 80 [ repeat , f ] [ string , "YOU WANT TO KNOW THE OBJECTIVE OF THE MISSION AGAIN? HOW COULD YOU GUYS HAVE FORGOTTEN SOMETHING SO IMPORTANT?" ] [ ttl , 2500 ]
 obj text 1600 200 24 88 [ repeat , f ] [ string , "ACTUALLY... YOU WERE SUPPOSED TO USED THE SYNC SYSTEM THE POWER UP THE MECHA AND DESTROY THE GROWING ALIEN MENACE..." ] [ ttl , 2500 ]
-obj text 1608 200 24 80 [ repeat , f ] [ string , "EVERYONE KNOWS THAT THE ONLY THING ABLE TO DESTROY GIGANTIC ENEMIES ARE FULLY POWERED MECHAS!" ] [ ttl , 2500 ]
-obj text 1616 200 24 72 [ repeat , f ] [ string , "BUT NOW THAT THE PLAN FAILED... PERHAPS WE SHOULD HEAD BACK AND RE-PLAN." ] [ ttl , 1200 ]
-obj text 1624 200 24 64 [ repeat , f ] [ string , "THERE'S AN EXIT RIGHT AHEAD." ] [ ttl , 1200 ]
+obj text 1720 200 24 80 [ repeat , f ] [ string , "EVERYONE KNOWS THAT THE ONLY THING ABLE TO DESTROY GIGANTIC ENEMIES ARE FULLY POWERED MECHAS!" ] [ ttl , 2500 ]
+obj text 1848 176 24 72 [ repeat , f ] [ string , "BUT NOW THAT THE PLAN FAILED... PERHAPS WE SHOULD HEAD BACK AND RE-PLAN." ] [ ttl , 1200 ]
+obj text 2104 200 24 64 [ repeat , f ] [ string , "THERE'S AN EXIT RIGHT AHEAD." ] [ ttl , 1200 ]
+obj lil_tank 1784 200 16 16
+obj turret 1752 216 16 16
+obj lil_tank 1808 200 16 16
+obj turret 1872 216 16 16
+obj turret 1896 216 16 16
+obj turret 1920 216 16 16
+obj lil_tank 1960 200 16 16
+obj lil_tank 1984 200 16 16
+obj lil_tank 2024 200 16 16
+area checkpoint 2056 120 24 56
+obj player -8 176 32 16
+area exit 2283 115 48 96

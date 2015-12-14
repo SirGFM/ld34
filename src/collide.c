@@ -251,22 +251,26 @@ gfmRV collide_run() {
             case PL_LOWER | (FLOOR << 16):
             case PL_LOWER | (PROP << 16):
             case PL_LOWER | (CHECKPOINT << 16):
+            case PL_LOWER | (EXIT << 16):
             case PL_LEFT_LEG | (PL_UPPER << 16):
             case PL_LEFT_LEG | (PL_LOWER << 16):
             case PL_LEFT_LEG | (PL_LEFT_LEG << 16):
             case PL_LEFT_LEG | (PL_RIGHT_LEG << 16):
             case PL_LEFT_LEG | (CHECKPOINT << 16):
+            case PL_LEFT_LEG | (EXIT << 16):
             case PL_RIGHT_LEG | (PL_UPPER << 16):
             case PL_RIGHT_LEG | (PL_LOWER << 16):
             case PL_RIGHT_LEG | (PL_LEFT_LEG << 16):
             case PL_RIGHT_LEG | (PL_RIGHT_LEG << 16):
             case PL_RIGHT_LEG | (CHECKPOINT << 16):
+            case PL_RIGHT_LEG | (EXIT << 16):
             case FLOOR | (PL_UPPER << 16):
             case FLOOR | (PL_LOWER << 16):
             case FLOOR | (FLOOR << 16):
             case FLOOR | (BULLET << 16):
             case FLOOR | (TEXT << 16):
             case FLOOR | (CHECKPOINT << 16):
+            case FLOOR | (EXIT << 16):
             case BULLET | (FLOOR << 16):
             case BULLET | (LIL_TANK << 16):
             case BULLET | (TURRET << 16):
@@ -274,6 +278,7 @@ gfmRV collide_run() {
             case BULLET | (PROP << 16):
             case BULLET | (TEXT << 16):
             case BULLET | (CHECKPOINT << 16):
+            case BULLET | (EXIT << 16):
             case LIL_TANK | (BULLET << 16):
             case LIL_TANK | (TEXT << 16):
             case TURRET | (BULLET << 16):
@@ -281,6 +286,7 @@ gfmRV collide_run() {
             case PROP | (BULLET << 16):
             case PROP | (TEXT << 16):
             case PROP | (CHECKPOINT << 16):
+            case PROP | (EXIT << 16):
             case TEXT | (FLOOR << 16):
             case TEXT | (LIL_TANK << 16):
             case TEXT | (TURRET << 16):
@@ -288,6 +294,7 @@ gfmRV collide_run() {
             case TEXT | (PROP << 16):
             case TEXT | (TEXT << 16):
             case TEXT | (CHECKPOINT << 16):
+            case TEXT | (EXIT << 16):
             case PL_UPPER | (TURRET << 16):
             case PL_LOWER | (TURRET << 16):
             case TURRET | (PL_UPPER << 16):
@@ -296,6 +303,7 @@ gfmRV collide_run() {
             case PL_LOWER | (LIL_TANK << 16):
             case LIL_TANK | (PL_UPPER << 16):
             case LIL_TANK | (PL_LOWER << 16):
+            case LIL_TANK | (LIL_TANK << 16):
             case CHECKPOINT | (TEXT << 16):
             case CHECKPOINT | (PROP << 16):
             case CHECKPOINT | (BULLET << 16):
@@ -303,6 +311,13 @@ gfmRV collide_run() {
             case CHECKPOINT | (PL_LEFT_LEG << 16):
             case CHECKPOINT | (PL_RIGHT_LEG << 16):
             case CHECKPOINT | (PL_LOWER << 16):
+            case EXIT | (TEXT << 16):
+            case EXIT | (PROP << 16):
+            case EXIT | (BULLET << 16):
+            case EXIT | (FLOOR << 16):
+            case EXIT | (PL_LEFT_LEG << 16):
+            case EXIT | (PL_RIGHT_LEG << 16):
+            case EXIT | (PL_LOWER << 16):
 
             case PL_LEFT_LEG | (PROP << 16):
             case PL_RIGHT_LEG | (PROP << 16):
@@ -410,6 +425,13 @@ gfmRV collide_run() {
                 rv = collide_checkpoint(pObj1, pObj2);
             } break;
             case CHECKPOINT | (PL_UPPER << 16): {
+                rv = collide_checkpoint(pObj2, pObj1);
+            } break;
+            /* Exit! */
+            case PL_UPPER | (EXIT << 16): {
+                rv = collide_checkpoint(pObj1, pObj2);
+            } break;
+            case EXIT | (PL_UPPER << 16): {
                 rv = collide_checkpoint(pObj2, pObj1);
             } break;
             default: {
