@@ -16,7 +16,7 @@ to install it:
 $ sudo apt-get install libsdl2-2.0.0
 ```
 
-The others libs must be cloned/downloaded and manually build. Check the README
+The others libs must be cloned/downloaded and manually built. Check the README
 on each lib repository (though it's usually just runnig '$ sudo make install').
 
 
