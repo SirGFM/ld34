@@ -35,5 +35,6 @@ Before running the game, download the missing sound effects from the TAG 1.0.0!
 ## Controls
 
 'F', 'Left shoulder button' - Move left leg
+
 'J', 'Right shoulder button' - Move right leg
 
